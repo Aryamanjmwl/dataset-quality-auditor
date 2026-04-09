@@ -1,0 +1,13 @@
+params:
+  missing_ratio_threshold: 0.05
+  high_card_unique_ratio_threshold: 0.5
+  high_card_unique_count_threshold: 50
+  correlation_threshold: 0.9
+  correlation_top_n: 10
+  outlier_iqr_multiplier: 1.5
+  outlier_ratio_threshold: 0.05
+  leakage_corr_threshold: 0.95
+  drift_psi_threshold: 0.2
+  drift_ks_alpha: 0.01
+  drift_top_n: 10
+  drift_numeric_bins: 10

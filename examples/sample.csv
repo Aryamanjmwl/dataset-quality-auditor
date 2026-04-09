@@ -1,0 +1,5 @@
+user_id,age,age_copy,income,target,target_copy
+u1,25,25,50000,0,0
+u2,30,30,,1,1
+u3,30,30,70000,1,1
+u4,999,999,70000,1,1
