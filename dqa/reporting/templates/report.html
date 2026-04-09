@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dataset Quality Audit Report</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 60px 40px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    
+    .header .timestamp {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .content { padding: 40px; }
+    
+    .health-score-section {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+      padding: 40px;
+      border-radius: 16px;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    
+    .health-score-number {
+      font-size: 64px;
+      font-weight: 900;
+      margin: 20px 0;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: white;
+      transition: width 0.6s ease;
+    }
+    
+    .score-description {
+      font-size: 14px;
+      opacity: 0.95;
+      margin-top: 15px;
+    }
+    
+    .penalties-info {
+      background: rgba(255, 255, 255, 0.15);
+      padding: 20px;
+      border-radius: 12px;
+      margin-top: 20px;
+      text-align: left;
+      font-size: 14px;
+    }
+    
+    .penalties-info div {
+      margin: 8px 0;
+    }
+    
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    
+    .stat-card {
+      background: #f9fafb;
+      padding: 24px;
+      border-radius: 12px;
+      border-left: 4px solid #667eea;
+    }
+    
+    .stat-card h3 {
+      font-size: 14px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    
+    .stat-value {
+      font-size: 36px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+    
+    .stat-card.high { border-left-color: #ef4444; }
+    .stat-card.medium { border-left-color: #f97316; }
+    .stat-card.low { border-left-color: #22c55e; }
+    
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1f2937;
+      margin: 40px 0 24px 0;
+      padding-bottom: 12px;
+      border-bottom: 3px solid #667eea;
+    }
+    
+    .card {
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 16px;
+    }
+    
+    .card p {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    
+    th {
+      background: #f3f4f6;
+      padding: 16px;
+      text-align: left;
+      font-weight: 700;
+      color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    
+    td {
+      padding: 16px;
+      border-bottom: 1px solid #e5e7eb;
+      vertical-align: top;
+    }
+    
+    tr:hover {
+      background: #f9fafb;
+    }
+    
+    .severity-badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .severity-HIGH {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    
+    .severity-MEDIUM {
+      background: #fed7aa;
+      color: #92400e;
+    }
+    
+    .severity-LOW {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .finding-title {
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 6px;
+    }
+    
+    .finding-id {
+      font-size: 12px;
+      color: #9ca3af;
+      font-family: "Monaco", "Courier New", monospace;
+    }
+    
+    .finding-desc {
+      color: #6b7280;
+      line-height: 1.6;
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    
+    .recommendation {
+      background: #f0fdf4;
+      border-left: 4px solid #22c55e;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #166534;
+      margin-top: 12px;
+    }
+    
+    .recommendation strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+    
+    .metrics-block {
+      background: #1f2937;
+      color: #e5e7eb;
+      padding: 16px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: "Monaco", "Courier New", monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    
+    .dataset-info {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    
+    .dataset-info h3 {
+      color: #0369a1;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    
+    .dataset-info p {
+      color: #0c4a6e;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .dataset-path {
+      font-family: "Monaco", "Courier New", monospace;
+      font-size: 12px;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      word-break: break-all;
+      color: #666;
+    }
+    
+    .columns-list {
+      background: white;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: "Monaco", "Courier New", monospace;
+      color: #666;
+      word-break: break-word;
+    }
+    
+    .top-risks-table {
+      margin-top: 24px;
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 { font-size: 28px; }
+      .health-score-number { font-size: 48px; }
+      .content { padding: 24px; }
+      .grid-2 { grid-template-columns: 1fr; }
+      th, td { padding: 12px; font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 Dataset Quality Audit Report</h1>
+      <p class="timestamp">Generated on {{ created_at_utc }}</p>
+    </div>
+
+    <div class="content">
+      <!-- Health Score Section -->
+      <div class="health-score-section">
+        <h2>Overall Health Score</h2>
+        <div class="health-score-number">{{ health_score }}</div>
+        <div class="progress-bar">
+          <div class="progress-fill" style="width: {{ health_score }}%;"></div>
+        </div>
+        <p class="score-description">Score out of 100 based on severity of issues found</p>
+        <div class="penalties-info">
+          <div><strong>Base Score:</strong> {{ score_breakdown.base_score }}</div>
+          <div><strong>Final Score:</strong> {{ score_breakdown.final_score }}</div>
+          <div style="margin-top: 12px;"><strong>Penalties Applied:</strong></div>
+          {% for k, v in score_breakdown.penalties.items() %}
+            <div>→ {{ k }}: -{{ v }} points</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Dataset Information -->
+      <h2 class="section-title">📁 Dataset Information</h2>
+      <div class="dataset-info">
+        <h3>File Details</h3>
+        <p><strong>Path:</strong></p>
+        <div class="dataset-path">{{ dataset.path }}</div>
+        <p style="margin-top: 12px;"><strong>Dimensions:</strong> {{ dataset.n_rows }} rows × {{ dataset.n_cols }} columns</p>
+        <p><strong>Columns:</strong></p>
+        <div class="columns-list">{{ dataset.columns | join(", ") }}</div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="grid-2">
+        <div class="stat-card high">
+          <h3>🚨 High Severity Issues</h3>
+          <div class="stat-value">{{ severity_counts.HIGH }}</div>
+        </div>
+        <div class="stat-card medium">
+          <h3>⚠️ Medium Severity Issues</h3>
+          <div class="stat-value">{{ severity_counts.MEDIUM }}</div>
+        </div>
+        <div class="stat-card low">
+          <h3>ℹ️ Low Severity Issues</h3>
+          <div class="stat-value">{{ severity_counts.LOW }}</div>
+        </div>
+      </div>
+
+      <!-- Top Risks -->
+      <h2 class="section-title">🎯 Top Risks</h2>
+      <div class="card">
+        <p>The most critical issues affecting your dataset quality:</p>
+        <table class="top-risks-table">
+          <thead>
+            <tr>
+              <th width="15%">Severity</th>
+              <th width="40%">Issue</th>
+              <th width="45%">Affected Columns</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for f in top_findings %}
+            <tr>
+              <td><span class="severity-badge severity-{{ f.severity }}">{{ f.severity }}</span></td>
+              <td>
+                <div class="finding-title">{{ f.title }}</div>
+                <div class="finding-id">{{ f.id }}</div>
+              </td>
+              <td>{{ f.columns | join(", ") if f.columns else "—" }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- All Findings -->
+      <h2 class="section-title">📋 All Findings ({{ findings | length }})</h2>
+      {% for f in findings %}
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+            <div>
+              <div class="finding-title">{{ f.title }}</div>
+              <div class="finding-id">ID: {{ f.id }}</div>
+            </div>
+            <span class="severity-badge severity-{{ f.severity }}">{{ f.severity }}</span>
+          </div>
+          
+          <div class="finding-desc">{{ f.description }}</div>
+          
+          {% if f.columns %}
+            <p><strong>Affected Columns:</strong> {{ f.columns | join(", ") }}</p>
+          {% endif %}
+          
+          {% if f.recommendation %}
+            <div class="recommendation">
+              <strong>✓ Recommendation:</strong>
+              {{ f.recommendation }}
+            </div>
+          {% endif %}
+          
+          {% if f.metrics %}
+            <p style="margin-top: 16px; font-weight: 600; color: #1f2937;">Metrics Details:</p>
+            <div class="metrics-block">{{ f.metrics | tojson(indent=2) }}</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  
+  </div>
+</body>
+</html>
