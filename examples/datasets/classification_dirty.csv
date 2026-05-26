@@ -1,9 +1,11 @@
-age,income,city,signup_days,label
-34,72000,Berlin,120,1
-29,,Paris,45,0
-41,83000,Berlin,400,1
-41,83000,Berlin,400,1
-,51000,London,12,0
-56,120000,New York,800,1
-23,39000,Paris,5,0
-64,999999,London,30,1
+customer_id,age,income_text,city,signup_date,constant_feature,label
+CUST-001,34,72000,Berlin,2025-01-10,active,1
+CUST-002,,51000,Paris,2025-01-11,active,1
+CUST-003,41,83000,London,2025-01-12,active,1
+CUST-004,41,83000,London,2025-01-12,active,1
+CUST-004,41,83000,London,2025-01-12,active,1
+CUST-005,29,39000,Madrid,2025-01-13,active,1
+CUST-006,,61000,Rome,2025-01-14,active,1
+CUST-007,56,120000,Berlin,2025-01-15,active,1
+CUST-008,23,41000,Paris,2025-01-16,active,1
+CUST-009,64,999999,London,2025-01-17,active,0

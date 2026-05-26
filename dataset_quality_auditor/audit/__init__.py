@@ -1,4 +1,5 @@
-"""Deterministic audit engine package.
+"""Deterministic audit engine package."""
 
-The full audit models, checks, and scoring are intentionally deferred.
-"""
+from dataset_quality_auditor.audit.engine import run_audit
+
+__all__ = ["run_audit"]

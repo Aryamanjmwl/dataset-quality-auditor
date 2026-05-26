@@ -6,8 +6,10 @@ from typing import Annotated
 import typer
 from rich.console import Console
 from rich.panel import Panel
+from rich.table import Table
 
 from dataset_quality_auditor import __version__
+from dataset_quality_auditor.audit.engine import run_audit
 
 app = typer.Typer(
     add_completion=False,
@@ -50,20 +52,60 @@ def audit(
         ),
     ],
     target: Annotated[
-        str,
+        str | None,
         typer.Option("--target", "-t", help="Name of the target column."),
-    ],
+    ] = None,
+    output_dir: Annotated[
+        str,
+        typer.Option("--output-dir", help="Directory where audit.json is written."),
+    ] = "reports",
 ) -> None:
-    """Prepare to audit a dataset."""
-    console.print(
-        Panel.fit(
-            "[bold green]Dataset accepted for audit planning[/bold green]\n"
-            f"Dataset: [cyan]{_display_path(dataset)}[/cyan]\n"
-            f"Target column: [cyan]{target}[/cyan]\n\n"
-            "Full deterministic checks and scoring are planned for Phase 3.",
-            border_style="green",
+    """Run the deterministic audit engine."""
+    try:
+        result = run_audit(
+            dataset_path=_display_path(dataset),
+            target_column=target,
+            output_dir=output_dir,
         )
+    except (FileNotFoundError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    profile = result["profile"]
+    score = result["score"]
+    issues = result["issues"]
+    assert isinstance(profile, dict)
+    assert isinstance(score, dict)
+    assert isinstance(issues, list)
+
+    issue_counts = {"critical": 0, "warning": 0, "info": 0}
+    for issue in issues:
+        assert isinstance(issue, dict)
+        severity = str(issue["severity"])
+        issue_counts[severity] = issue_counts.get(severity, 0) + 1
+
+    table = Table.grid(padding=(0, 1))
+    table.add_column(style="bold")
+    table.add_column()
+    table.add_row("Dataset:", _display_path(dataset))
+    table.add_row("Target:", target or "not provided")
+    table.add_row("Rows:", str(profile["row_count"]))
+    table.add_row("Columns:", str(profile["column_count"]))
+    table.add_row("", "")
+    table.add_row(
+        "Readiness Score:",
+        f"{score['score']}/{score['max_score']}",
     )
+    table.add_row("Band:", str(score["score_band"]))
+    table.add_row("", "")
+    table.add_row("Issues:", "")
+    table.add_row("Critical:", str(issue_counts["critical"]))
+    table.add_row("Warnings:", str(issue_counts["warning"]))
+    table.add_row("Info:", str(issue_counts["info"]))
+    table.add_row("", "")
+    table.add_row("Audit JSON written to:", f"{Path(output_dir).as_posix()}/audit.json")
+
+    console.print("[bold]Dataset Quality Auditor[/bold]\n")
+    console.print(table)
 
 
 @app.command()
