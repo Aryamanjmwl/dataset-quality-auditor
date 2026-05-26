@@ -22,6 +22,7 @@ class HighCardinalityCategoricalCheck:
       - [] if no columns flagged
       - One Finding (HIGH_CARDINALITY_CATEGORICAL) listing all flagged columns
     """
+
     name: str = "high_cardinality_categorical"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:
@@ -29,7 +30,9 @@ class HighCardinalityCategoricalCheck:
         count_thr = int(ctx.params.get("high_card_unique_count_threshold", 50))
 
         # treat object/category/bool as categorical-like
-        cat_cols = list(df.select_dtypes(include=["object", "category", "bool"]).columns)
+        cat_cols = list(
+            df.select_dtypes(include=["object", "category", "bool"]).columns
+        )
 
         flagged: List[str] = []
         per_col: Dict[str, Dict[str, float]] = {}

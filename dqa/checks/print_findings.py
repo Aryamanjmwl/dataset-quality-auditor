@@ -27,7 +27,11 @@ def main(report_path: str = "reports/report.json") -> int:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(prog="print_findings", description="Print findings from a report JSON file")
-    parser.add_argument("--report", default="reports/report.json", help="Path to report JSON file")
+    parser = argparse.ArgumentParser(
+        prog="print_findings", description="Print findings from a report JSON file"
+    )
+    parser.add_argument(
+        "--report", default="reports/report.json", help="Path to report JSON file"
+    )
     args = parser.parse_args()
     sys.exit(main(args.report))

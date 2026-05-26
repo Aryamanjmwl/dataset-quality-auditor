@@ -13,6 +13,7 @@ class Config:
     """
     Simple config container for audit params.
     """
+
     params: Dict[str, Any]
 
     @staticmethod

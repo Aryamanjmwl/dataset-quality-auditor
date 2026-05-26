@@ -18,6 +18,7 @@ class MissingValuesCheck:
       - [] if no column exceeds the threshold AND overall ratio below threshold
       - One Finding (MISSING_VALUES) otherwise
     """
+
     name: str = "missing_values"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:
@@ -36,7 +37,9 @@ class MissingValuesCheck:
             return []
 
         # Severity heuristic
-        worst_col_ratio = float(max([per_col_ratio[c] for c in flagged_cols], default=0.0))
+        worst_col_ratio = float(
+            max([per_col_ratio[c] for c in flagged_cols], default=0.0)
+        )
         if worst_col_ratio >= 0.30 or overall_ratio >= 0.20:
             sev = Severity.HIGH
         elif worst_col_ratio >= 0.10 or overall_ratio >= 0.05:

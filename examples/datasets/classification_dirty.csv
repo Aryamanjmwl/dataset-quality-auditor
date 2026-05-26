@@ -1,0 +1,9 @@
+age,income,city,signup_days,label
+34,72000,Berlin,120,1
+29,,Paris,45,0
+41,83000,Berlin,400,1
+41,83000,Berlin,400,1
+,51000,London,12,0
+56,120000,New York,800,1
+23,39000,Paris,5,0
+64,999999,London,30,1

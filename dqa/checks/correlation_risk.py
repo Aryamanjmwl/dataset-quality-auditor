@@ -20,6 +20,7 @@ class CorrelationRiskCheck:
     - redundant features
     - leakage-like behavior if a derived feature encodes target or future info
     """
+
     name: str = "correlation_risk"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:

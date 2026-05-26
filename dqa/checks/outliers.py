@@ -64,6 +64,7 @@ class OutlierDetectionCheck:
       - [] if no column exceeds threshold
       - OUTLIERS_DETECTED if any columns exceed threshold
     """
+
     name: str = "outlier_detection"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:
@@ -87,7 +88,9 @@ class OutlierDetectionCheck:
         if not flagged:
             return []
 
-        max_ratio = max(per_col[c]["outlier_ratio"] for c in flagged) if flagged else 0.0
+        max_ratio = (
+            max(per_col[c]["outlier_ratio"] for c in flagged) if flagged else 0.0
+        )
         sev = Severity.HIGH if max_ratio >= 2 * threshold else Severity.MEDIUM
 
         return [

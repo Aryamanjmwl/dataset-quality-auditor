@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 import json
@@ -13,6 +12,7 @@ class JSONReporter:
     """
     Writes an AuditReport to a structured JSON file.
     """
+
     filename: str = "report.json"
     indent: int = 2
 

@@ -16,6 +16,7 @@ class DuplicateRowsCheck:
 
     Duplicates can inflate model performance (data leakage) and bias metrics.
     """
+
     name: str = "duplicate_rows"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:

@@ -12,6 +12,7 @@ class Severity(str, Enum):
 
     Kept as str Enum so JSON serialization is clean (e.g. "HIGH").
     """
+
     LOW = "LOW"
     MEDIUM = "MEDIUM"
     HIGH = "HIGH"
@@ -22,6 +23,7 @@ class DatasetInfo:
     """
     Basic metadata about the audited dataset.
     """
+
     path: str
     n_rows: int
     n_cols: int
@@ -33,6 +35,7 @@ class Finding:
     """
     One detected issue/risk in the dataset.
     """
+
     id: str
     title: str
     description: str
@@ -47,8 +50,9 @@ class ScoreBreakdown:
     """
     Explainable scoring breakdown.
     """
+
     base_score: float
-    penalties: Dict[str, float]     # keys: "LOW","MEDIUM","HIGH"
+    penalties: Dict[str, float]  # keys: "LOW","MEDIUM","HIGH"
     final_score: float
 
 
@@ -57,6 +61,7 @@ class AuditReport:
     """
     Full output of an audit run.
     """
+
     dataset: DatasetInfo
     findings: List[Finding]
     health_score: float

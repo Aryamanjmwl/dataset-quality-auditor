@@ -16,6 +16,7 @@ class TrainTestOverlapCheck:
     """
     Detect row overlap between train and test datasets (leakage risk).
     """
+
     name: str = "train_test_overlap"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:
@@ -56,7 +57,9 @@ class TrainTestOverlapCheck:
         train_sig = pd.util.hash_pandas_object(train[cols], index=False)
         test_sig = pd.util.hash_pandas_object(test[cols], index=False)
 
-        overlap = set(train_sig.values.tolist()).intersection(set(test_sig.values.tolist()))
+        overlap = set(train_sig.values.tolist()).intersection(
+            set(test_sig.values.tolist())
+        )
         overlap_count = len(overlap)
 
         train_rows = len(train)

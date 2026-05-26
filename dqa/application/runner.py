@@ -4,7 +4,14 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional, Sequence, Union
 
-from dqa.domain import AuditContext, AuditReport, DatasetInfo, Finding, ScoreBreakdown, Severity
+from dqa.domain import (
+    AuditContext,
+    AuditReport,
+    DatasetInfo,
+    Finding,
+    ScoreBreakdown,
+    Severity,
+)
 from dqa.domain.interfaces import Check
 from dqa.io import CSVDataLoader
 
