@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -17,6 +16,7 @@ class AuditContext:
 
     This avoids hardcoding things like target column name inside each check.
     """
+
     target: Optional[str] = None
     # You can store additional runtime config here as you grow:
     params: Dict[str, object] = field(default_factory=dict)
@@ -27,10 +27,10 @@ class Check(Protocol):
     """
     A dataset check that returns a list of findings.
     """
+
     name: str
 
-    def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:
-        ...
+    def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]: ...
 
 
 @runtime_checkable
@@ -38,5 +38,5 @@ class Reporter(Protocol):
     """
     A reporter writes an AuditReport somewhere (json/html/etc).
     """
-    def write(self, report: object, out_dir: Path) -> Path:
-        ...
+
+    def write(self, report: object, out_dir: Path) -> Path: ...

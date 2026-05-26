@@ -14,4 +14,3 @@ def test_csv_loader_basic(tmp_path):
     assert result.n_rows == 2
     assert result.n_cols == 2
     assert list(result.df.columns) == ["a", "b"]
-

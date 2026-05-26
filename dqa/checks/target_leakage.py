@@ -19,6 +19,7 @@ class TargetLeakageCheck:
     - One finding for correlated features (TARGET_LEAKAGE_CORRELATION) listing all suspicious columns
     - One finding for proxy/identical features (TARGET_LEAKAGE_PROXY) listing all identical columns
     """
+
     name: str = "target_leakage"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:

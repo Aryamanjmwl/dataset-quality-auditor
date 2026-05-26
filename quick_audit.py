@@ -8,7 +8,8 @@ import sys
 import pandas as pd
 from pathlib import Path
 
-def quick_audit(csv_file, target_col='target'):
+
+def quick_audit(csv_file, target_col="target"):
     """Simple function to audit heart disease data"""
 
     try:
@@ -19,7 +20,7 @@ def quick_audit(csv_file, target_col='target'):
             ClassImbalanceCheck,
             OutlierDetectionCheck,
             TargetLeakageCheck,
-            CorrelationRiskCheck
+            CorrelationRiskCheck,
         )
 
         print("🔍 Starting Data Quality Audit...")
@@ -36,7 +37,7 @@ def quick_audit(csv_file, target_col='target'):
                 TargetLeakageCheck(),
                 CorrelationRiskCheck(),
             ],
-            loader=CSVDataLoader()
+            loader=CSVDataLoader(),
         )
 
         # Run audit
@@ -74,11 +75,14 @@ def quick_audit(csv_file, target_col='target'):
 
     except ImportError:
         print("❌ ERROR: DQA not installed!")
-        print("Run: pip install git+https://github.com/your-username/dataset-quality-auditor.git")
+        print(
+            "Run: pip install git+https://github.com/your-username/dataset-quality-auditor.git"
+        )
         return None
     except Exception as e:
         print(f"❌ ERROR: {e}")
         return None
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -87,7 +91,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     csv_file = sys.argv[1]
-    target_col = sys.argv[2] if len(sys.argv) > 2 else 'target'
+    target_col = sys.argv[2] if len(sys.argv) > 2 else "target"
 
     if not Path(csv_file).exists():
         print(f"❌ File not found: {csv_file}")

@@ -70,17 +70,30 @@ def main() -> None:
     audit.add_argument("--target", default=None, help="Target column name (optional).")
     audit.add_argument("--out", default="reports", help="Output directory for reports.")
 
-    audit.add_argument("--train", default=None, help="Optional train CSV path (overlap check).")
-    audit.add_argument("--test", default=None, help="Optional test CSV path (overlap check).")
+    audit.add_argument(
+        "--train", default=None, help="Optional train CSV path (overlap check)."
+    )
+    audit.add_argument(
+        "--test", default=None, help="Optional test CSV path (overlap check)."
+    )
 
     audit.add_argument("--ref", default=None, help="Reference CSV path (drift check).")
     audit.add_argument("--cur", default=None, help="Current CSV path (drift check).")
 
-    audit.add_argument("--config", default=None, help="Path to config .yaml/.yml or .json")
-    audit.add_argument("--param", action="append", default=[], help="Extra params key=value (repeatable).")
+    audit.add_argument(
+        "--config", default=None, help="Path to config .yaml/.yml or .json"
+    )
+    audit.add_argument(
+        "--param",
+        action="append",
+        default=[],
+        help="Extra params key=value (repeatable).",
+    )
 
     audit.add_argument("--debug", action="store_true", help="Print debug info")
-    audit.add_argument("--print-findings", action="store_true", help="Print finding IDs + severity")
+    audit.add_argument(
+        "--print-findings", action="store_true", help="Print finding IDs + severity"
+    )
 
     args = parser.parse_args()
 

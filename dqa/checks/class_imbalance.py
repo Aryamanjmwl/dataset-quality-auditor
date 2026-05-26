@@ -14,6 +14,7 @@ class ClassImbalanceCheck:
     """
     Detect class imbalance in a classification target column.
     """
+
     name: str = "class_imbalance"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:
@@ -53,8 +54,12 @@ class ClassImbalanceCheck:
         n_classes = int(counts.shape[0])
 
         # thresholds (configurable via ctx.params later)
-        min_class_ratio_threshold = float(ctx.params.get("min_class_ratio_threshold", 0.10))  # 10%
-        max_imbalance_ratio_threshold = float(ctx.params.get("max_imbalance_ratio_threshold", 5.0))  # max/min >= 5
+        min_class_ratio_threshold = float(
+            ctx.params.get("min_class_ratio_threshold", 0.10)
+        )  # 10%
+        max_imbalance_ratio_threshold = float(
+            ctx.params.get("max_imbalance_ratio_threshold", 5.0)
+        )  # max/min >= 5
 
         ratios = (counts / n).to_dict()
 
@@ -66,7 +71,9 @@ class ClassImbalanceCheck:
         max_count = int(counts.max())
         max_min_ratio = (max_count / min_count) if min_count > 0 else float("inf")
 
-        is_imbalanced = (min_ratio < min_class_ratio_threshold) or (max_min_ratio >= max_imbalance_ratio_threshold)
+        is_imbalanced = (min_ratio < min_class_ratio_threshold) or (
+            max_min_ratio >= max_imbalance_ratio_threshold
+        )
 
         if not is_imbalanced:
             return []
@@ -92,8 +99,12 @@ class ClassImbalanceCheck:
                 metrics={
                     "n_samples": n,
                     "n_classes": n_classes,
-                    "class_counts": {str(k): int(v) for k, v in counts.to_dict().items()},
-                    "class_ratios": {str(k): round(float(v), 6) for k, v in ratios.items()},
+                    "class_counts": {
+                        str(k): int(v) for k, v in counts.to_dict().items()
+                    },
+                    "class_ratios": {
+                        str(k): round(float(v), 6) for k, v in ratios.items()
+                    },
                     "min_class_ratio": round(min_ratio, 6),
                     "max_min_count_ratio": round(float(max_min_ratio), 6),
                     "min_class_ratio_threshold": min_class_ratio_threshold,

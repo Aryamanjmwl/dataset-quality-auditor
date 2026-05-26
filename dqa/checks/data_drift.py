@@ -89,6 +89,7 @@ class DataDriftCheck:
     - DATA_DRIFT_DETECTED if drift is flagged
     - DATA_DRIFT_SUMMARY if comparison ran but nothing exceeded thresholds
     """
+
     name: str = "data_drift"
 
     def run(self, df: pd.DataFrame, ctx: AuditContext) -> List[Finding]:
@@ -131,7 +132,9 @@ class DataDriftCheck:
         for c in common_cols:
             ref_s = ref_df[c]
             cur_s = cur_df[c]
-            is_num = pd.api.types.is_numeric_dtype(ref_s) and pd.api.types.is_numeric_dtype(cur_s)
+            is_num = pd.api.types.is_numeric_dtype(
+                ref_s
+            ) and pd.api.types.is_numeric_dtype(cur_s)
 
             if is_num:
                 r = pd.to_numeric(ref_s, errors="coerce").dropna()
@@ -201,7 +204,9 @@ class DataDriftCheck:
                 drift[col] = default
             drift[col] = drift[col].fillna(default)
 
-        drift = drift.sort_values(by=["psi", "ks_stat"], ascending=False, na_position="last")
+        drift = drift.sort_values(
+            by=["psi", "ks_stat"], ascending=False, na_position="last"
+        )
 
         flagged = drift[(drift["flag_psi"] == True) | (drift["flag_ks"] == True)]
 
@@ -216,7 +221,9 @@ class DataDriftCheck:
             "psi_threshold": psi_thr,
             "ks_alpha": ks_alpha,
             "columns_compared": int(len(common_cols)),
-            "flagged_columns_count": int(flagged["column"].nunique()) if not flagged.empty else 0,
+            "flagged_columns_count": int(flagged["column"].nunique())
+            if not flagged.empty
+            else 0,
             "top_drifted_columns": top.to_dict(orient="records"),
         }
 

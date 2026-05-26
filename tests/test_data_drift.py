@@ -79,7 +79,4 @@ def test_cli_debug_passes_ref_cur(tmp_path):
         report = json.load(f)
 
     assert "findings" in report
-    assert any(
-        f["id"].startswith("DATA_DRIFT")
-        for f in report["findings"]
-    )
+    assert any(f["id"].startswith("DATA_DRIFT") for f in report["findings"])

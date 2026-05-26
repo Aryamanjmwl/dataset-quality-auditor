@@ -18,6 +18,7 @@ class HTMLReporter:
     - severity_counts
     - top_findings (sorted by severity)
     """
+
     filename: str = "report.html"
     template_name: str = "report.html"
 
@@ -44,7 +45,7 @@ class HTMLReporter:
         sev_rank = {"HIGH": 3, "MEDIUM": 2, "LOW": 1}
         findings_sorted: List[Dict[str, Any]] = sorted(
             payload.get("findings", []),
-            key=lambda f: (sev_rank.get(f.get("severity", "LOW"), 1)),
+            key=lambda f: sev_rank.get(f.get("severity", "LOW"), 1),
             reverse=True,
         )
 

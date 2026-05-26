@@ -18,6 +18,7 @@ class LoadResult:
         n_rows: Number of rows.
         n_cols: Number of columns.
     """
+
     df: pd.DataFrame
     path: Path
     n_rows: int
