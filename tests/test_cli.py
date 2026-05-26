@@ -28,6 +28,7 @@ def test_audit_existing_dataset() -> None:
     )
 
     assert result.exit_code == 0
-    assert "Dataset accepted for audit planning" in result.stdout
+    assert "Dataset Quality Auditor" in result.stdout
+    assert "Readiness Score:" in result.stdout
     assert "examples/datasets/classification_dirty.csv" in result.stdout
     assert "label" in result.stdout
