@@ -1,245 +1,103 @@
-# Dataset Quality Auditor (DQA)
+# Dataset Quality Auditor
 
-[![Python Version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Tests](https://github.com/Aryamanjmwl/dataset-quality-auditor/actions/workflows/ci.yml/badge.svg)](https://github.com/Aryamanjmwl/dataset-quality-auditor/actions)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+Dataset Quality Auditor is a CLI-first Python package for auditing tabular
+machine learning datasets before training.
 
-**Dataset Quality Auditor (DQA)** is a Python library for validating tabular machine learning datasets before training. It detects data issues, measures dataset health, and generates readable JSON and HTML reports.
+The project is being built as a deterministic-first developer tool. The audit
+engine will be the source of truth for findings, issue IDs, scores, and dataset
+readiness signals. AI integrations are planned later to explain and prioritize
+deterministic findings, not to invent findings or modify data.
 
----
+## Mission
 
-## 🚀 What DQA Does
+Help ML engineers and data teams catch dataset readiness problems before model
+training, while keeping audit results reproducible, inspectable, and safe for
+automation.
 
-DQA helps you find data quality and model risk issues in tabular datasets. It runs a set of standard checks, then creates a health score and actionable findings so you can fix problems early.
+## What the Tool Does
 
-### Why use DQA?
-- Find dataset problems before training a model
-- Prevent bad predictions caused by noisy or leaked data
-- Standardize dataset validation in your workflow
-- Generate reports for data reviews and audits
+Dataset Quality Auditor is intended to:
 
----
+- Audit tabular datasets from the command line.
+- Produce deterministic readiness findings and scores.
+- Generate reports for humans and CI workflows.
+- Create dataset contracts for repeatable validation.
+- Add an AI review layer later for explanation and prioritization.
 
-## ✨ Features
+## Deterministic-First Principle
 
-### 🔍 Built-in Quality Checks
-- **Missing Values** — spots missing data and columns with excessive nulls
-- **Outliers** — finds anomalies using IQR method
-- **Class Imbalance** — evaluates target distribution imbalance
-- **Feature Correlation** — identifies redundant or highly correlated features
-- **Target Leakage** — detects features that may leak label information
-- **High Cardinality** — flags categorical features with too many unique values
-- **Duplicates** — finds identical or duplicate rows
-- **Train/Test Overlap** — detects data leakage between train and test sets
-- **Data Drift** — compares distribution changes across datasets
+Deterministic audit logic is the authority. AI may later summarize, group, and
+prioritize audit findings, but it must not:
 
-### 📊 Reporting
-- **Health Score** (0–100)
-- **HTML reports** with clean formatting
-- **JSON output** for automation and integration
-- **Actionable recommendations** for each issue
+- Invent findings.
+- Change scores.
+- Modify datasets.
+- Discuss issues without referencing deterministic issue IDs.
 
-### 🛠️ Ease of Use
-- **CLI** for fast audits
-- **Python API** for integration into scripts
-- **YAML configuration** for custom behavior
-- **Modular design** for easy extension
+## Current Status
 
----
+This repository is in early Phase 1 foundation work. The package structure,
+CLI skeleton, documentation, tests, and CI are in place. The full audit engine,
+contracts, reports, provider integrations, and LangGraph workflow are planned
+for later phases.
 
-## 📦 Installation
-
-### Option 1: Install from GitHub
-```bash
-pip install git+https://github.com/Aryamanjmwl/dataset-quality-auditor.git
-```
-
-### Option 2: Clone and install locally
-```bash
-git clone https://github.com/Aryamanjmwl/dataset-quality-auditor.git
-cd dataset-quality-auditor
-pip install -e .
-```
-
-### Requirements
-- Python 3.10+
-- pandas
-- numpy
-- scikit-learn
-- jinja2
-- pyyaml
-
----
-
-## 🚀 Quick Start
-
-### Basic CLI
-```bash
-python -m dqa audit --data your_data.csv --target target_column
-```
-
-### CLI with config
-```bash
-python -m dqa audit --data your_data.csv --target target_column --config config.yaml
-```
-
-### Python API
-```python
-from dqa import audit_dataset
-from dqa.config import Config
-
-config = Config.from_yaml('config.yaml')
-results = audit_dataset('your_data.csv', 'target_column', config=config)
-print(f"Health Score: {results['health_score']}/100")
-```
-
-### Quick audit script
-```bash
-python quick_audit.py your_data.csv target_column
-```
-
----
-
-## 📋 Example Output
-
-```
-🔍 Starting Data Quality Audit...
-📁 File: examples/sample.csv
-🎯 Target: target
---------------------------------------------------
-📊 AUDIT RESULTS
-Health Score: 46.0/100
-Dataset: 1000 rows, 15 columns
-Issues Found: 5
-
-🚨 ISSUES FOUND:
-1. [MEDIUM] Missing values detected
-   Dataset contains missing values. Overall missing ratio is 0.023.
-   💡 Inspect columns with missingness and consider imputation.
-
-2. [HIGH] Outliers detected in numeric features
-   Detected outliers using IQR method. 3 columns exceed threshold.
-   💡 Verify whether outliers are valid or apply robust scaling.
-
-3. [HIGH] Target leakage detected
-   2 features show correlation >0.95 with target.
-   💡 Remove these features or revise feature engineering.
-
-4. [MEDIUM] Class imbalance detected
-   Target distribution: {0: 65%, 1: 35%}
-   💡 Consider resampling or class weights.
-
-5. [LOW] Highly correlated features
-   Found 2 pairs with correlation >0.9.
-   💡 Consider feature selection or dimensionality reduction.
-```
-
----
-
-## 📁 Project Structure
-
-```
-dataset-quality-auditor/
-├── dqa/                    # Main package
-│   ├── __init__.py         # Package initialization
-│   ├── cli.py              # Command-line interface
-│   ├── config.py           # Configuration management
-│   ├── application/        # Audit runner and workflow
-│   │   └── runner.py
-│   ├── domain/             # Data models and interfaces
-│   │   ├── models.py
-│   │   └── interfaces.py
-│   ├── checks/             # Built-in dataset checks
-│   │   ├── missing_values.py
-│   │   ├── outliers.py
-│   │   ├── correlation_risk.py
-│   │   └── ...
-│   ├── io/                 # CSV loading
-│   │   └── csv_loader.py
-│   └── reporting/          # Report generation
-│       ├── html_reporter.py
-│       └── json_reporter.py
-├── examples/               # Sample datasets
-│   ├── sample.csv
-│   ├── train.csv
-│   └── test.csv
-├── tests/                  # Test suite
-├── config.yaml             # Default configuration
-├── pyproject.toml          # Package configuration
-└── quick_audit.py          # Quick audit helper script
-```
-
----
-
-## ⚙️ Configuration
-
-Use `config.yaml` to customize checks and output:
-
-```yaml
-checks:
-  missing_values:
-    threshold: 0.05
-  outliers:
-    method: iqr
-    multiplier: 1.5
-  correlation:
-    threshold: 0.9
-
-reporting:
-  output_dir: reports/
-  formats: [html, json]
-```
-
----
-
-## 📊 Result Interpretation
-
-### Health score
-- **80-100**: Excellent — ready for modeling
-- **60-79**: Good — minor improvements suggested
-- **40-59**: Fair — significant issues need attention
-- **20-39**: Poor — dataset quality is weak
-- **0-19**: Critical — dataset requires cleanup
-
-### Severity levels
-- **HIGH** 🚨 — fix before modeling
-- **MEDIUM** ⚠️ — important but not blocking
-- **LOW** ℹ️ — informative or optional
-
----
-
-## 🧪 Development
+## Installation
 
 ```bash
-git clone https://github.com/Aryamanjmwl/dataset-quality-auditor.git
-cd dataset-quality-auditor
-pip install -e "[dev]"
-pytest tests/
+pip install -e ".[dev]"
 ```
 
----
+## CLI
 
-## 🛠️ Contributing
+```bash
+dqa --help
+dqa version
+dqa audit examples/datasets/classification_dirty.csv --target label
+dqa report audit.json --format markdown
+dqa contract examples/datasets/classification_dirty.csv --target label
+dqa validate examples/datasets/classification_dirty.csv --contract contract.json
+```
 
-1. Add new check under `dqa/checks/`
-2. Register it in `dqa/checks/__init__.py`
-3. Update `config.yaml` if needed
-4. Add tests in `tests/`
+The current `audit` command validates that the dataset path exists and prints a
+clear planning message with the dataset path and target column. Other commands
+are professional placeholders until their roadmap phases are implemented.
 
----
+## Roadmap
 
-## 📄 License
+- Phase 1: Foundation
+- Phase 2: Audit models and issue schema
+- Phase 3: Deterministic checks and scoring
+- Phase 4: Reports
+- Phase 5: Contracts and validation
+- Phase 6: AI review engine and LangGraph workflow
+- Phase 7: Public release polish
 
-MIT License — see [LICENSE](LICENSE).
+See [docs/roadmap.md](docs/roadmap.md) for more detail.
 
+## Safety Principles
 
-1. Add new check under `dqa/checks/`
-2. Register it in `dqa/checks/__init__.py`
-3. Update `config.yaml` if needed
-4. Add tests in `tests/`
+- The deterministic audit engine is the source of truth.
+- AI cannot invent findings.
+- AI cannot change scores.
+- AI cannot modify datasets.
+- AI review text must reference deterministic issue IDs once available.
 
----
+See [docs/safety.md](docs/safety.md) for the full safety model.
 
-## 📄 License
+## Development
 
-MIT License — see [LICENSE](LICENSE).
+```bash
+pip install -e ".[dev]"
+ruff check .
+pytest
+```
+
+## Architecture
+
+See [docs/architecture.md](docs/architecture.md) for the intended package
+architecture, including the deterministic audit engine, reports, contracts, AI
+review layer, provider abstraction, and future LangGraph workflow.
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
