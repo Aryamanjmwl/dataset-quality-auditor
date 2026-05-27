@@ -1,5 +1,6 @@
-from dataset_quality_auditor.reports.markdown_report import generate_markdown_report
 from tests.fixtures import sample_audit_result
+
+from dataset_quality_auditor.reports.markdown_report import generate_markdown_report
 
 
 def test_markdown_report_contains_required_sections() -> None:

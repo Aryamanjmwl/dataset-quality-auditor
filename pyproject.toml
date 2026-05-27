@@ -65,3 +65,7 @@ exclude = [
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["dataset_quality_auditor"]
+known-third-party = ["tests"]

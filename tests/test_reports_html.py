@@ -1,5 +1,6 @@
-from dataset_quality_auditor.reports.html_report import generate_html_report
 from tests.fixtures import sample_audit_result
+
+from dataset_quality_auditor.reports.html_report import generate_html_report
 
 
 def test_html_report_contains_core_content() -> None:

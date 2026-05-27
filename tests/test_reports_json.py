@@ -1,8 +1,9 @@
+from tests.fixtures import sample_audit_result
+
 from dataset_quality_auditor.reports.json_report import (
     load_audit_json,
     save_json_report,
 )
-from tests.fixtures import sample_audit_result
 
 
 def test_json_report_save_and_load_round_trip(tmp_path) -> None:
