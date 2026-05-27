@@ -80,7 +80,13 @@ def _write_report_artifacts(
 
 
 def _print_audit_summary(audit_result: dict, generated_paths: list[Path]) -> None:
-    profile = audit_result["profile"]
+    raw_profile = audit_result["profile"]
+    assert isinstance(raw_profile, dict)
+    profile = (
+        raw_profile["train"]
+        if audit_result.get("mode") == "train_test"
+        else raw_profile
+    )
     score = audit_result["score"]
     issues = audit_result["issues"]
     assert isinstance(profile, dict)
@@ -96,7 +102,10 @@ def _print_audit_summary(audit_result: dict, generated_paths: list[Path]) -> Non
     table = Table.grid(padding=(0, 1))
     table.add_column(style="bold")
     table.add_column()
+    table.add_row("Mode:", str(audit_result.get("mode", "single_dataset")))
     table.add_row("Dataset:", str(audit_result["dataset_path"]))
+    if audit_result.get("test_dataset_path"):
+        table.add_row("Test dataset:", str(audit_result["test_dataset_path"]))
     table.add_row("Target:", str(audit_result.get("target_column") or "not provided"))
     table.add_row("Rows:", str(profile["row_count"]))
     table.add_row("Columns:", str(profile["column_count"]))
@@ -139,6 +148,17 @@ def audit(
         str | None,
         typer.Option("--target", "-t", help="Name of the target column."),
     ] = None,
+    test_dataset: Annotated[
+        Path | None,
+        typer.Option(
+            "--test",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Optional test dataset for train/test checks.",
+        ),
+    ] = None,
     output_dir: Annotated[
         str,
         typer.Option("--output-dir", help="Directory where audit.json is written."),
@@ -158,6 +178,7 @@ def audit(
         audit_result = run_audit(
             dataset_path=_display_path(dataset),
             target_column=target,
+            test_dataset_path=_display_path(test_dataset) if test_dataset else None,
             output_dir=output_dir,
         )
     except (FileNotFoundError, ValueError) as exc:

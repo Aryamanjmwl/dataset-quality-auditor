@@ -37,6 +37,7 @@ pip install -e ".[dev]"
 dqa audit examples/datasets/classification_dirty.csv --target label
 dqa audit examples/datasets/classification_dirty.csv --target label --output-dir reports
 dqa audit examples/datasets/classification_dirty.csv --target label --format all
+dqa audit train.csv --test test.csv --target label
 ```
 
 ## Example Output
@@ -115,11 +116,16 @@ Phase 2 includes checks for:
 - Class imbalance
 - Suspicious ID-like columns
 - Datatype risks such as numeric values stored as object strings
+- Outlier risk
+- Correlation risk
+- Target leakage candidates
+- Train/test schema mismatch, overlap, and drift when `--test` is provided
 
 ## Documentation
 
 - [Architecture](docs/architecture.md)
 - [Audit engine](docs/audit-engine.md)
+- [Checks](docs/checks.md)
 - [Issue schema](docs/issue-schema.md)
 - [Scoring](docs/scoring.md)
 - [Reports](docs/reports.md)

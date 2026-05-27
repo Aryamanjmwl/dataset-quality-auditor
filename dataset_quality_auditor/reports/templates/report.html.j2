@@ -48,6 +48,8 @@
     <table>
       <tbody>
         <tr><th>Dataset</th><td><code>{{ audit.dataset_path }}</code></td></tr>
+        <tr><th>Mode</th><td>{{ audit.mode|default("single_dataset") }}</td></tr>
+        <tr><th>Test dataset</th><td>{{ audit.test_dataset_path }}</td></tr>
         <tr><th>Target</th><td>{{ audit.target_column }}</td></tr>
         <tr><th>Rows</th><td>{{ profile.row_count }}</td></tr>
         <tr><th>Columns</th><td>{{ profile.column_count }}</td></tr>
