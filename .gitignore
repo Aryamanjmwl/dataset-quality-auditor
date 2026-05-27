@@ -50,10 +50,11 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 .pytest-tmp/
+.pytest-run/
 cover/
 .pytest-tmp/
 # Generated reports
-reports/
+/reports/
 
 # Translations
 *.mo

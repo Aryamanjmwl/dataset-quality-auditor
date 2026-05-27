@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dataset Quality Audit Report</title>
+  <style>
+    :root { color-scheme: light; --ink: #172033; --muted: #64748b; --line: #d8dee9; --bg: #f7f9fc; --card: #ffffff; --critical: #b42318; --warning: #b54708; --info: #175cd3; }
+    body { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; color: var(--ink); background: var(--bg); }
+    main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 48px; }
+    h1 { margin: 0 0 8px; font-size: 32px; }
+    h2 { margin-top: 32px; font-size: 20px; }
+    p { color: var(--muted); }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+    .score { font-size: 36px; font-weight: 760; }
+    .label { color: var(--muted); font-size: 13px; text-transform: uppercase; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef2f7; font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .critical { color: #fff; background: var(--critical); }
+    .warning { color: #fff; background: var(--warning); }
+    .info { color: #fff; background: var(--info); }
+    code { background: #eef2f7; padding: 2px 4px; border-radius: 4px; }
+    ul { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px 16px 16px 34px; }
+    @media (max-width: 700px) { main { padding: 20px 12px; } table { font-size: 13px; } th, td { padding: 8px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Dataset Quality Audit Report</h1>
+    <p>This report is generated from deterministic audit results.</p>
+
+    <section class="grid">
+      <div class="card">
+        <div class="label">Readiness Score</div>
+        <div class="score">{{ score.score }}/{{ score.max_score }}</div>
+        <strong>{{ score.score_band }}</strong>
+      </div>
+      <div class="card"><div class="label">Critical</div><div class="score">{{ issue_counts.critical }}</div></div>
+      <div class="card"><div class="label">Warning</div><div class="score">{{ issue_counts.warning }}</div></div>
+      <div class="card"><div class="label">Info</div><div class="score">{{ issue_counts.info }}</div></div>
+    </section>
+
+    <h2>Dataset Overview</h2>
+    <table>
+      <tbody>
+        <tr><th>Dataset</th><td><code>{{ audit.dataset_path }}</code></td></tr>
+        <tr><th>Target</th><td>{{ audit.target_column }}</td></tr>
+        <tr><th>Rows</th><td>{{ profile.row_count }}</td></tr>
+        <tr><th>Columns</th><td>{{ profile.column_count }}</td></tr>
+        <tr><th>Duplicate rows</th><td>{{ profile.duplicate_row_count }}</td></tr>
+        <tr><th>Duplicate percent</th><td>{{ "%.4g"|format(profile.duplicate_row_percent) }}</td></tr>
+        <tr><th>Audit ID</th><td><code>{{ audit.audit_id }}</code></td></tr>
+        <tr><th>Created at</th><td>{{ audit.created_at }}</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Issues</h2>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Severity</th><th>Title</th><th>Column</th><th>Evidence</th><th>Recommendation</th><th>Human Review</th></tr>
+      </thead>
+      <tbody>
+      {% for issue in issues %}
+        <tr>
+          <td><code>{{ issue.issue_id }}</code></td>
+          <td><span class="badge {{ issue.severity }}">{{ issue.severity }}</span></td>
+          <td>{{ issue.title }}</td>
+          <td>{{ issue.scope.column }}</td>
+          <td>{{ issue.evidence.metric }}: {{ issue.evidence.observed_value }} (threshold {{ issue.evidence.threshold }})</td>
+          <td>{{ issue.recommendation }}</td>
+          <td>{{ issue.requires_human_review }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Column Overview</h2>
+    <table>
+      <thead><tr><th>Column</th><th>Role</th><th>Type</th><th>Missing %</th><th>Unique %</th><th>Numeric</th><th>Categorical</th></tr></thead>
+      <tbody>
+      {% for column in profile.columns.values() %}
+        <tr>
+          <td><code>{{ column.name }}</code></td>
+          <td>{{ column.inferred_role }}</td>
+          <td>{{ column.dtype }}</td>
+          <td>{{ "%.4g"|format(column.missing_percent) }}</td>
+          <td>{{ "%.4g"|format(column.unique_percent) }}</td>
+          <td>{{ column.is_numeric }}</td>
+          <td>{{ column.is_categorical }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+    <h2>Recommendations</h2>
+    <ul>
+    {% for recommendation in recommendations %}
+      <li>{{ recommendation }}</li>
+    {% else %}
+      <li>No issue recommendations.</li>
+    {% endfor %}
+    </ul>
+
+    <h2>Metadata</h2>
+    <table>
+      <tbody>
+        <tr><th>Package version</th><td>{{ metadata.package_version }}</td></tr>
+        <tr><th>Engine version</th><td>{{ metadata.engine_version }}</td></tr>
+        <tr><th>Deterministic</th><td>{{ metadata.deterministic }}</td></tr>
+        <tr><th>AI generated</th><td>{{ metadata.ai_generated }}</td></tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>
