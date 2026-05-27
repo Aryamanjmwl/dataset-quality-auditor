@@ -21,3 +21,18 @@ edit, clean, impute, delete, or rewrite dataset files.
 
 Once issue IDs are implemented, AI-generated review text must cite those IDs so
 users can trace every statement back to the audit engine.
+
+## AI Review Guardrails
+
+AI review output is validated before it is written. Unsupported AI output is
+rejected by guardrails.
+
+Rules:
+
+- AI cannot invent findings.
+- AI cannot create issue IDs not present in `audit.json`.
+- AI cannot change readiness scores.
+- AI cannot change score bands.
+- AI cannot modify datasets.
+- AI must reference deterministic issue IDs.
+- AI review metadata must identify deterministic source data.

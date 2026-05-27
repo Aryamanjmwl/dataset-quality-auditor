@@ -105,6 +105,21 @@ Default outputs:
 
 See [docs/contracts.md](docs/contracts.md).
 
+## AI Review
+
+AI review is currently available through a deterministic mock provider only. It
+reads `audit.json`, prioritizes existing deterministic issues, copies the
+readiness score and score band exactly, and writes `reports/ai_review.json`.
+
+```bash
+dqa review reports/audit.json --provider mock
+```
+
+Future OpenAI and Ollama providers are planned, but they are not required and no
+external API calls are made in this phase.
+
+See [docs/ai-review.md](docs/ai-review.md).
+
 ## Deterministic Checks
 
 Phase 2 includes checks for:
@@ -124,6 +139,7 @@ Phase 2 includes checks for:
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [AI Review](docs/ai-review.md)
 - [Audit engine](docs/audit-engine.md)
 - [Checks](docs/checks.md)
 - [Issue schema](docs/issue-schema.md)
