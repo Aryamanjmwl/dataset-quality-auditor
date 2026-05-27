@@ -29,6 +29,7 @@ dependencies = [
     "pandas>=2.0",
     "rich>=13.7",
     "typer>=0.12",
+    "Jinja2>=3.1",
 ]
 
 [project.optional-dependencies]
@@ -43,8 +44,11 @@ dqa = "dataset_quality_auditor.cli:app"
 [tool.setuptools.packages.find]
 include = ["dataset_quality_auditor*"]
 
+[tool.setuptools.package-data]
+dataset_quality_auditor = ["reports/templates/*.j2"]
+
 [tool.pytest.ini_options]
-addopts = "-ra --basetemp=.pytest-tmp -p no:cacheprovider"
+addopts = "-ra --basetemp=.pytest-run -p no:cacheprovider"
 testpaths = ["tests"]
 
 [tool.ruff]
@@ -61,3 +65,7 @@ exclude = [
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["dataset_quality_auditor"]
+known-third-party = ["tests"]

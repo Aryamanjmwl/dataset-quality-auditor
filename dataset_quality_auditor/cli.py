@@ -10,6 +10,12 @@ from rich.table import Table
 
 from dataset_quality_auditor import __version__
 from dataset_quality_auditor.audit.engine import run_audit
+from dataset_quality_auditor.reports import (
+    load_audit_json,
+    save_html_report,
+    save_json_report,
+    save_markdown_report,
+)
 
 app = typer.Typer(
     add_completion=False,
@@ -17,6 +23,7 @@ app = typer.Typer(
     no_args_is_help=True,
 )
 console = Console()
+REPORT_FORMATS = {"json", "markdown", "html", "all"}
 
 
 def _planned_message(feature: str) -> None:
@@ -31,6 +38,77 @@ def _planned_message(feature: str) -> None:
 
 def _display_path(path: Path) -> str:
     return path.as_posix()
+
+
+def _validate_report_format(report_format: str) -> str:
+    normalized = report_format.lower()
+    if normalized not in REPORT_FORMATS:
+        allowed = ", ".join(sorted(REPORT_FORMATS))
+        msg = f"Unsupported report format '{report_format}'. Use one of: {allowed}."
+        raise typer.BadParameter(msg)
+    return normalized
+
+
+def _write_report_artifacts(
+    audit_result: dict,
+    report_format: str,
+    output_dir: str,
+    include_json_report: bool,
+) -> list[Path]:
+    normalized = _validate_report_format(report_format)
+    output_path = Path(output_dir)
+    generated: list[Path] = []
+    if include_json_report and normalized in {"json", "all"}:
+        generated.append(
+            save_json_report(audit_result, output_path / "audit_report.json")
+        )
+    if normalized in {"markdown", "all"}:
+        generated.append(
+            save_markdown_report(audit_result, output_path / "audit_report.md")
+        )
+    if normalized in {"html", "all"}:
+        generated.append(
+            save_html_report(audit_result, output_path / "audit_report.html")
+        )
+    return generated
+
+
+def _print_audit_summary(audit_result: dict, generated_paths: list[Path]) -> None:
+    profile = audit_result["profile"]
+    score = audit_result["score"]
+    issues = audit_result["issues"]
+    assert isinstance(profile, dict)
+    assert isinstance(score, dict)
+    assert isinstance(issues, list)
+
+    issue_counts = {"critical": 0, "warning": 0, "info": 0}
+    for issue in issues:
+        assert isinstance(issue, dict)
+        severity = str(issue["severity"])
+        issue_counts[severity] = issue_counts.get(severity, 0) + 1
+
+    table = Table.grid(padding=(0, 1))
+    table.add_column(style="bold")
+    table.add_column()
+    table.add_row("Dataset:", str(audit_result["dataset_path"]))
+    table.add_row("Target:", str(audit_result.get("target_column") or "not provided"))
+    table.add_row("Rows:", str(profile["row_count"]))
+    table.add_row("Columns:", str(profile["column_count"]))
+    table.add_row("", "")
+    table.add_row("Readiness Score:", f"{score['score']}/{score['max_score']}")
+    table.add_row("Band:", str(score["score_band"]))
+    table.add_row("", "")
+    table.add_row("Issues:", "")
+    table.add_row("Critical:", str(issue_counts["critical"]))
+    table.add_row("Warnings:", str(issue_counts["warning"]))
+    table.add_row("Info:", str(issue_counts["info"]))
+    table.add_row("", "")
+    for index, path in enumerate(generated_paths):
+        label = "Generated:" if index else "Audit JSON written to:"
+        table.add_row(label, path.as_posix())
+
+    console.print("[bold]Dataset Quality Auditor[/bold]\n")
+    console.print(table)
 
 
 @app.command()
@@ -59,10 +137,19 @@ def audit(
         str,
         typer.Option("--output-dir", help="Directory where audit.json is written."),
     ] = "reports",
+    format: Annotated[
+        str,
+        typer.Option(
+            "--format",
+            "-f",
+            help="Report format: json, markdown, html, all.",
+        ),
+    ] = "json",
 ) -> None:
     """Run the deterministic audit engine."""
+    _validate_report_format(format)
     try:
-        result = run_audit(
+        audit_result = run_audit(
             dataset_path=_display_path(dataset),
             target_column=target,
             output_dir=output_dir,
@@ -70,59 +157,58 @@ def audit(
     except (FileNotFoundError, ValueError) as exc:
         raise typer.BadParameter(str(exc)) from exc
 
-    profile = result["profile"]
-    score = result["score"]
-    issues = result["issues"]
-    assert isinstance(profile, dict)
-    assert isinstance(score, dict)
-    assert isinstance(issues, list)
-
-    issue_counts = {"critical": 0, "warning": 0, "info": 0}
-    for issue in issues:
-        assert isinstance(issue, dict)
-        severity = str(issue["severity"])
-        issue_counts[severity] = issue_counts.get(severity, 0) + 1
-
-    table = Table.grid(padding=(0, 1))
-    table.add_column(style="bold")
-    table.add_column()
-    table.add_row("Dataset:", _display_path(dataset))
-    table.add_row("Target:", target or "not provided")
-    table.add_row("Rows:", str(profile["row_count"]))
-    table.add_row("Columns:", str(profile["column_count"]))
-    table.add_row("", "")
-    table.add_row(
-        "Readiness Score:",
-        f"{score['score']}/{score['max_score']}",
+    generated = [Path(output_dir) / "audit.json"]
+    generated.extend(
+        _write_report_artifacts(
+            audit_result,
+            report_format=format,
+            output_dir=output_dir,
+            include_json_report=False,
+        )
     )
-    table.add_row("Band:", str(score["score_band"]))
-    table.add_row("", "")
-    table.add_row("Issues:", "")
-    table.add_row("Critical:", str(issue_counts["critical"]))
-    table.add_row("Warnings:", str(issue_counts["warning"]))
-    table.add_row("Info:", str(issue_counts["info"]))
-    table.add_row("", "")
-    table.add_row("Audit JSON written to:", f"{Path(output_dir).as_posix()}/audit.json")
-
-    console.print("[bold]Dataset Quality Auditor[/bold]\n")
-    console.print(table)
+    _print_audit_summary(audit_result, generated)
 
 
 @app.command()
 def report(
     audit_json: Annotated[
         Path,
-        typer.Argument(help="Path to a deterministic audit JSON file."),
+        typer.Argument(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Path to a deterministic audit JSON file.",
+        ),
     ],
     format: Annotated[
         str,
-        typer.Option("--format", "-f", help="Report format to generate."),
+        typer.Option(
+            "--format",
+            "-f",
+            help="Report format: json, markdown, html, all.",
+        ),
     ] = "markdown",
+    output_dir: Annotated[
+        str,
+        typer.Option("--output-dir", help="Directory where report files are written."),
+    ] = "reports",
 ) -> None:
-    """Generate a report from deterministic audit output."""
-    _planned_message(
-        f"Report generation from {audit_json} using format '{format}'"
+    """Generate reports from deterministic audit output."""
+    _validate_report_format(format)
+    try:
+        audit_result = load_audit_json(audit_json)
+    except FileNotFoundError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    generated = _write_report_artifacts(
+        audit_result,
+        report_format=format,
+        output_dir=output_dir,
+        include_json_report=True,
     )
+    console.print("[bold]Dataset Quality Auditor Report[/bold]\n")
+    for path in generated:
+        console.print(f"Generated: [cyan]{path.as_posix()}[/cyan]")
 
 
 @app.command()

@@ -16,10 +16,13 @@ automation.
 
 ## Current Status
 
-Phase 2 adds a real deterministic audit core. The `dqa audit` command now loads
-a CSV dataset, profiles it, infers basic column roles, runs deterministic checks,
-calculates a readiness score, writes `reports/audit.json`, and prints a Rich
-terminal summary.
+The repository includes the official Phase 2 deterministic audit core and the
+Phase 3 reporting layer. The `dqa audit` command loads a CSV dataset, profiles
+it, infers basic column roles, runs deterministic checks, calculates a readiness
+score, writes `reports/audit.json`, and prints a Rich terminal summary.
+
+Reports can be generated during audit or regenerated later from the deterministic
+audit JSON.
 
 ## Installation
 
@@ -27,21 +30,12 @@ terminal summary.
 pip install -e ".[dev]"
 ```
 
-## CLI
+## Audit
 
 ```bash
-dqa --help
-dqa version
 dqa audit examples/datasets/classification_dirty.csv --target label
 dqa audit examples/datasets/classification_dirty.csv --target label --output-dir reports
-```
-
-Planned commands remain available as placeholders:
-
-```bash
-dqa report reports/audit.json --format markdown
-dqa contract examples/datasets/classification_dirty.csv --target label
-dqa validate examples/datasets/classification_dirty.csv --contract contract.json
+dqa audit examples/datasets/classification_dirty.csv --target label --format all
 ```
 
 ## Example Output
@@ -63,9 +57,32 @@ Warnings: 6
 Info: 1
 
 Audit JSON written to: reports/audit.json
+Generated: reports/audit_report.md
+Generated: reports/audit_report.html
 ```
 
 Exact counts can change as deterministic checks evolve.
+
+## Reports
+
+Reports only present findings from deterministic audit JSON. They do not invent
+findings, change scores, or modify datasets.
+
+```bash
+dqa report reports/audit.json --format json
+dqa report reports/audit.json --format markdown
+dqa report reports/audit.json --format html
+dqa report reports/audit.json --format all
+```
+
+Output files:
+
+- `reports/audit.json`
+- `reports/audit_report.json`
+- `reports/audit_report.md`
+- `reports/audit_report.html`
+
+See [docs/reports.md](docs/reports.md).
 
 ## Deterministic Checks
 
@@ -85,26 +102,9 @@ Phase 2 includes checks for:
 - [Audit engine](docs/audit-engine.md)
 - [Issue schema](docs/issue-schema.md)
 - [Scoring](docs/scoring.md)
+- [Reports](docs/reports.md)
 - [Roadmap](docs/roadmap.md)
 - [Safety](docs/safety.md)
-
-## Roadmap
-
-- Phase 1: Foundation
-- Phase 2: Audit models and issue schema
-- Phase 3: Deterministic checks and scoring expansion
-- Phase 4: Reports
-- Phase 5: Contracts and validation
-- Phase 6: AI review engine and LangGraph workflow
-- Phase 7: Public release polish
-
-## Safety Principles
-
-- The deterministic audit engine is the source of truth.
-- AI cannot invent findings.
-- AI cannot change scores.
-- AI cannot modify datasets.
-- AI review text must reference deterministic issue IDs once available.
 
 ## Development
 
