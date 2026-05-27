@@ -22,7 +22,8 @@ it, infers basic column roles, runs deterministic checks, calculates a readiness
 score, writes `reports/audit.json`, and prints a Rich terminal summary.
 
 Reports can be generated during audit or regenerated later from the deterministic
-audit JSON.
+audit JSON. YAML data contracts can also be generated and used to validate later
+datasets.
 
 ## Installation
 
@@ -84,6 +85,25 @@ Output files:
 
 See [docs/reports.md](docs/reports.md).
 
+## Data Contracts
+
+Contracts are deterministic YAML files inferred from observed dataset profiles.
+They capture required columns, logical types, missingness limits, numeric ranges,
+categorical allowed values, target metadata, and human-review hints for ID-like
+columns.
+
+```bash
+dqa contract examples/datasets/classification_dirty.csv --target label
+dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
+```
+
+Default outputs:
+
+- `contracts/classification_dirty_contract.yaml`
+- `reports/validation_result.json`
+
+See [docs/contracts.md](docs/contracts.md).
+
 ## Deterministic Checks
 
 Phase 2 includes checks for:
@@ -103,6 +123,7 @@ Phase 2 includes checks for:
 - [Issue schema](docs/issue-schema.md)
 - [Scoring](docs/scoring.md)
 - [Reports](docs/reports.md)
+- [Contracts](docs/contracts.md)
 - [Roadmap](docs/roadmap.md)
 - [Safety](docs/safety.md)
 

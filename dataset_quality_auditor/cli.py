@@ -10,6 +10,12 @@ from rich.table import Table
 
 from dataset_quality_auditor import __version__
 from dataset_quality_auditor.audit.engine import run_audit
+from dataset_quality_auditor.contracts import (
+    generate_contract,
+    save_contract,
+    save_validation_result,
+    validate_dataset,
+)
 from dataset_quality_auditor.reports import (
     load_audit_json,
     save_html_report,
@@ -213,28 +219,111 @@ def report(
 
 @app.command()
 def contract(
-    dataset: Annotated[Path, typer.Argument(help="Path to a dataset file.")],
-    target: Annotated[
-        str,
-        typer.Option("--target", "-t", help="Name of the target column."),
+    dataset: Annotated[
+        Path,
+        typer.Argument(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Path to a dataset file.",
+        ),
     ],
+    target: Annotated[
+        str | None,
+        typer.Option("--target", "-t", help="Name of the target column."),
+    ] = None,
+    output_dir: Annotated[
+        str,
+        typer.Option("--output-dir", help="Directory where contract YAML is written."),
+    ] = "contracts",
+    filename: Annotated[
+        str | None,
+        typer.Option("--filename", help="Optional contract filename."),
+    ] = None,
 ) -> None:
-    """Generate a dataset contract."""
-    _planned_message(
-        f"Contract generation for {dataset} with target column '{target}'"
+    """Generate a deterministic YAML data contract."""
+    try:
+        generated_contract = generate_contract(_display_path(dataset), target)
+    except (FileNotFoundError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    output_name = filename or f"{dataset.stem}_contract.yaml"
+    output_path = save_contract(generated_contract, Path(output_dir) / output_name)
+    columns = generated_contract["columns"]
+    assert isinstance(columns, dict)
+    review_count = sum(
+        1
+        for column_contract in columns.values()
+        if isinstance(column_contract, dict)
+        and bool(column_contract.get("requires_human_review", False))
     )
+
+    table = Table.grid(padding=(0, 1))
+    table.add_column(style="bold")
+    table.add_column()
+    table.add_row("Dataset:", _display_path(dataset))
+    table.add_row("Target:", target or "not provided")
+    table.add_row("Columns included:", str(len(columns)))
+    table.add_row("Human review hints:", str(review_count))
+    table.add_row("Contract written to:", output_path.as_posix())
+    console.print("[bold]Dataset Quality Auditor Contract[/bold]\n")
+    console.print(table)
 
 
 @app.command()
 def validate(
-    dataset: Annotated[Path, typer.Argument(help="Path to a dataset file.")],
+    dataset: Annotated[
+        Path,
+        typer.Argument(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Path to a dataset file.",
+        ),
+    ],
     contract: Annotated[
         Path,
-        typer.Option("--contract", "-c", help="Path to a dataset contract."),
+        typer.Option(
+            "--contract",
+            "-c",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Path to a dataset contract.",
+        ),
     ],
+    output_dir: Annotated[
+        str,
+        typer.Option(
+            "--output-dir",
+            help="Directory where validation JSON is written.",
+        ),
+    ] = "reports",
 ) -> None:
-    """Validate a dataset against a contract."""
-    _planned_message(f"Validation of {dataset} against contract {contract}")
+    """Validate a dataset against a deterministic YAML contract."""
+    try:
+        result = validate_dataset(_display_path(dataset), _display_path(contract))
+    except (FileNotFoundError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    output_path = save_validation_result(
+        result,
+        Path(output_dir) / "validation_result.json",
+    )
+    summary = result["summary"]
+    assert isinstance(summary, dict)
+
+    table = Table.grid(padding=(0, 1))
+    table.add_column(style="bold")
+    table.add_column()
+    table.add_row("Status:", "passed" if result["passed"] else "failed")
+    table.add_row("Total checks:", str(summary["total_checks"]))
+    table.add_row("Failed checks:", str(summary["failed_checks"]))
+    table.add_row("Validation JSON written to:", output_path.as_posix())
+    console.print("[bold]Dataset Quality Auditor Validation[/bold]\n")
+    console.print(table)
 
 
 if __name__ == "__main__":

@@ -29,3 +29,15 @@ dqa report reports/audit.json --format markdown
 ```bash
 dqa report reports/audit.json --format html
 ```
+
+## Generate Data Contract
+
+```bash
+dqa contract examples/datasets/classification_dirty.csv --target label
+```
+
+## Validate Dataset Against Contract
+
+```bash
+dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
+```
