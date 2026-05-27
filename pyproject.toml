@@ -49,7 +49,7 @@ include = ["dataset_quality_auditor*"]
 dataset_quality_auditor = ["reports/templates/*.j2"]
 
 [tool.pytest.ini_options]
-addopts = "-ra --basetemp=.pytest-run -p no:cacheprovider"
+addopts = "-ra --basetemp=.pytest-ai-run -p no:cacheprovider"
 testpaths = ["tests"]
 
 [tool.ruff]

@@ -9,6 +9,7 @@ from rich.panel import Panel
 from rich.table import Table
 
 from dataset_quality_auditor import __version__
+from dataset_quality_auditor.ai import generate_ai_review
 from dataset_quality_auditor.audit.engine import run_audit
 from dataset_quality_auditor.contracts import (
     generate_contract,
@@ -344,6 +345,58 @@ def validate(
     table.add_row("Failed checks:", str(summary["failed_checks"]))
     table.add_row("Validation JSON written to:", output_path.as_posix())
     console.print("[bold]Dataset Quality Auditor Validation[/bold]\n")
+    console.print(table)
+
+
+@app.command()
+def review(
+    audit_json: Annotated[
+        Path,
+        typer.Argument(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Path to a deterministic audit JSON file.",
+        ),
+    ],
+    provider: Annotated[
+        str,
+        typer.Option("--provider", help="AI review provider. Currently: mock."),
+    ] = "mock",
+    output_dir: Annotated[
+        str,
+        typer.Option("--output-dir", help="Directory where ai_review.json is written."),
+    ] = "reports",
+) -> None:
+    """Generate a guarded AI review from deterministic audit JSON."""
+    try:
+        ai_review = generate_ai_review(
+            audit_json_path=audit_json,
+            provider_name=provider,
+            output_dir=output_dir,
+        )
+    except (FileNotFoundError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    output_path = Path(output_dir) / "ai_review.json"
+    table = Table.grid(padding=(0, 1))
+    table.add_column(style="bold")
+    table.add_column()
+    table.add_row("Provider:", str(ai_review["provider"]))
+    table.add_row("Model:", str(ai_review["model"]))
+    table.add_row("Audit ID:", str(ai_review["audit_id"]))
+    table.add_row("Readiness score:", str(ai_review["readiness_score"]))
+    table.add_row(
+        "Prioritized issues:",
+        str(len(ai_review["prioritized_issues"])),
+    )
+    table.add_row(
+        "Human review questions:",
+        str(len(ai_review["human_review_questions"])),
+    )
+    table.add_row("AI review written to:", output_path.as_posix())
+    console.print("[bold]Dataset Quality Auditor AI Review[/bold]\n")
     console.print(table)
 
 

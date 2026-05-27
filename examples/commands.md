@@ -41,3 +41,9 @@ dqa contract examples/datasets/classification_dirty.csv --target label
 ```bash
 dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
 ```
+
+## AI Review With Mock Provider
+
+```bash
+dqa review reports/audit.json --provider mock
+```
