@@ -7,6 +7,8 @@ from dataset_quality_auditor.audit.evidence import Evidence
 
 @dataclass(frozen=True)
 class Issue:
+    """A reproducible dataset readiness issue."""
+
     issue_id: str
     check_id: str
     title: str

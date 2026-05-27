@@ -19,6 +19,8 @@ DEFAULT_CONFIG: dict[str, float] = {
 
 @dataclass(frozen=True)
 class AuditContext:
+    """Runtime context shared by deterministic checks."""
+
     dataset_path: str
     target_column: str | None
     test_dataset_path: str | None
@@ -36,9 +38,11 @@ def create_audit_context(
     output_dir: str = "reports",
     config: dict[str, float] | None = None,
 ) -> AuditContext:
+    """Create an audit context with default thresholds."""
     merged_config = DEFAULT_CONFIG.copy()
     if config:
         merged_config.update(config)
+
     return AuditContext(
         dataset_path=dataset_path,
         target_column=target_column,

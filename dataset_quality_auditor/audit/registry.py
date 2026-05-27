@@ -1,4 +1,4 @@
-"""Default check registry."""
+"""Default deterministic check registry."""
 
 from collections.abc import Callable
 
@@ -18,6 +18,7 @@ Check = Callable[[pd.DataFrame, dict[str, object], AuditContext], list[Issue]]
 
 
 def get_default_checks() -> list[Check]:
+    """Return checks run by the Phase 2 audit engine."""
     return [
         check_missing_values,
         check_duplicate_rows,

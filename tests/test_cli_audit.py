@@ -5,7 +5,7 @@ from dataset_quality_auditor.cli import app
 runner = CliRunner()
 
 
-def test_cli_audit_prints_score_and_writes_audit_json(tmp_path) -> None:
+def test_cli_audit_exits_successfully_and_prints_score(tmp_path) -> None:
     result = runner.invoke(
         app,
         [
@@ -19,6 +19,7 @@ def test_cli_audit_prints_score_and_writes_audit_json(tmp_path) -> None:
     )
 
     assert result.exit_code == 0
+    assert "Dataset Quality Auditor" in result.stdout
     assert "Readiness Score:" in result.stdout
     assert "Audit JSON written to:" in result.stdout
     assert (tmp_path / "audit.json").exists()

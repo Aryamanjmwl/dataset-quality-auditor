@@ -25,11 +25,11 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "Jinja2>=3.1",
     "numpy>=1.26",
     "pandas>=2.0",
     "rich>=13.7",
     "typer>=0.12",
+    "Jinja2>=3.1",
 ]
 
 [project.optional-dependencies]

@@ -3,6 +3,7 @@
 CRITICAL = "critical"
 WARNING = "warning"
 INFO = "info"
+
 HIGH = "high"
 MEDIUM = "medium"
 LOW = "low"

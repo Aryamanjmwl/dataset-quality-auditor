@@ -19,16 +19,3 @@ def test_version() -> None:
 
     assert result.exit_code == 0
     assert __version__ in result.stdout
-
-
-def test_audit_existing_dataset() -> None:
-    result = runner.invoke(
-        app,
-        ["audit", "examples/datasets/classification_dirty.csv", "--target", "label"],
-    )
-
-    assert result.exit_code == 0
-    assert "Dataset Quality Auditor" in result.stdout
-    assert "Readiness Score:" in result.stdout
-    assert "examples/datasets/classification_dirty.csv" in result.stdout
-    assert "label" in result.stdout

@@ -7,6 +7,8 @@ ObservedValue = int | float | str | bool
 
 @dataclass(frozen=True)
 class Evidence:
+    """Machine-readable evidence that supports an issue."""
+
     metric: str
     observed_value: ObservedValue
     threshold: ObservedValue | None

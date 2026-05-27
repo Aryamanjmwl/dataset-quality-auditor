@@ -1,4 +1,4 @@
-"""ID-like column check."""
+"""Suspicious ID-like column checks."""
 
 import pandas as pd
 
@@ -20,27 +20,35 @@ ID_NAME_SIGNALS = (
 
 
 def check_id_like_columns(
-    df: pd.DataFrame, profile: dict[str, object], context: AuditContext
+    df: pd.DataFrame,
+    profile: dict[str, object],
+    context: AuditContext,
 ) -> list[Issue]:
     issues: list[Issue] = []
     columns = profile["columns"]
     assert isinstance(columns, dict)
+
     for column, column_profile in columns.items():
         assert isinstance(column_profile, dict)
         if column == context.target_column:
             continue
+
+        column_name = str(column).lower()
         unique_percent = float(column_profile["unique_percent"])
         unique_signal = unique_percent >= context.config["id_unique_ratio_threshold"]
-        name_signal = any(signal in str(column).lower() for signal in ID_NAME_SIGNALS)
+        name_signal = any(signal in column_name for signal in ID_NAME_SIGNALS)
         if not unique_signal and not name_signal:
             continue
+
+        severity = WARNING if unique_signal else INFO
+        risk_level = MEDIUM if unique_signal else LOW
         issues.append(
             Issue(
                 issue_id=issue_id("id_like", str(column)),
                 check_id="id_like_columns",
                 title="Suspicious ID-like column detected",
-                severity=WARNING if unique_signal else INFO,
-                risk_level=MEDIUM if unique_signal else LOW,
+                severity=severity,
+                risk_level=risk_level,
                 status="failed",
                 scope={
                     "dataset": "train",
@@ -48,18 +56,23 @@ def check_id_like_columns(
                     "column_role": column_profile["inferred_role"],
                 },
                 evidence=Evidence(
-                    "unique_percent",
-                    unique_percent,
-                    context.config["id_unique_ratio_threshold"],
-                    "observed_value >= threshold or name contains ID signal",
-                    {
+                    metric="unique_percent",
+                    observed_value=unique_percent,
+                    threshold=context.config["id_unique_ratio_threshold"],
+                    comparison=(
+                        "observed_value >= threshold or name contains ID signal"
+                    ),
+                    details={
                         "unique_count": int(column_profile["unique_count"]),
                         "total_rows": int(profile["row_count"]),
                         "name_signal": name_signal,
                         "unique_signal": unique_signal,
                     },
                 ),
-                ml_impact="ID-like columns may create leakage or brittle memorization.",
+                ml_impact=(
+                    "ID-like columns may create leakage or brittle memorization "
+                    "if they are not available or meaningful at prediction time."
+                ),
                 recommendation=ID_LIKE,
                 requires_human_review=True,
                 reproducibility=reproducibility(
@@ -73,4 +86,5 @@ def check_id_like_columns(
                 ),
             )
         )
+
     return issues

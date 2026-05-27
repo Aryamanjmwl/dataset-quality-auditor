@@ -3,7 +3,11 @@
 from dataset_quality_auditor.audit.issues import Issue
 from dataset_quality_auditor.audit.severity import CRITICAL, INFO, WARNING
 
-BASE_DEDUCTIONS = {CRITICAL: 20, WARNING: 8, INFO: 2}
+BASE_DEDUCTIONS = {
+    CRITICAL: 20,
+    WARNING: 8,
+    INFO: 2,
+}
 HUMAN_REVIEW_DEDUCTION = 2
 
 
@@ -16,15 +20,18 @@ def _score_band(score: int) -> str:
 
 
 def calculate_readiness_score(issues: list[Issue]) -> dict[str, object]:
+    """Calculate a deterministic readiness score from issue severities."""
     deductions: list[dict[str, object]] = []
-    total = 0
+    total_deduction = 0
+
     for issue in issues:
         deduction = BASE_DEDUCTIONS.get(issue.severity, 0)
         reason = f"{issue.severity} issue"
         if issue.requires_human_review:
             deduction += HUMAN_REVIEW_DEDUCTION
             reason = f"{reason}; requires human review"
-        total += deduction
+
+        total_deduction += deduction
         deductions.append(
             {
                 "issue_id": issue.issue_id,
@@ -33,7 +40,8 @@ def calculate_readiness_score(issues: list[Issue]) -> dict[str, object]:
                 "reason": reason,
             }
         )
-    score = max(0, min(100, 100 - total))
+
+    score = max(0, min(100, 100 - total_deduction))
     return {
         "score": score,
         "max_score": 100,

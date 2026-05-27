@@ -8,12 +8,21 @@ findings, evidence, issue IDs, and readiness scoring. AI review is planned for a
 later phase, but AI will only explain and prioritize deterministic findings. It
 must not invent findings, change scores, or modify datasets.
 
+## Mission
+
+Help ML engineers and data teams catch dataset readiness problems before model
+training while keeping audit results reproducible, inspectable, and safe for
+automation.
+
 ## Current Status
 
-Phase 3 adds a professional reporting layer. `dqa audit` runs the deterministic
-core, writes `reports/audit.json`, and can also generate Markdown and HTML
-reports. `dqa report` regenerates reports from an existing deterministic
-`audit.json`.
+The repository includes the official Phase 2 deterministic audit core and the
+Phase 3 reporting layer. The `dqa audit` command loads a CSV dataset, profiles
+it, infers basic column roles, runs deterministic checks, calculates a readiness
+score, writes `reports/audit.json`, and prints a Rich terminal summary.
+
+Reports can be generated during audit or regenerated later from the deterministic
+audit JSON.
 
 ## Installation
 
@@ -25,10 +34,11 @@ pip install -e ".[dev]"
 
 ```bash
 dqa audit examples/datasets/classification_dirty.csv --target label
+dqa audit examples/datasets/classification_dirty.csv --target label --output-dir reports
 dqa audit examples/datasets/classification_dirty.csv --target label --format all
 ```
 
-Sample terminal output:
+## Example Output
 
 ```text
 Dataset Quality Auditor
@@ -51,11 +61,15 @@ Generated: reports/audit_report.md
 Generated: reports/audit_report.html
 ```
 
+Exact counts can change as deterministic checks evolve.
+
 ## Reports
 
-Reports only present findings from deterministic audit JSON.
+Reports only present findings from deterministic audit JSON. They do not invent
+findings, change scores, or modify datasets.
 
 ```bash
+dqa report reports/audit.json --format json
 dqa report reports/audit.json --format markdown
 dqa report reports/audit.json --format html
 dqa report reports/audit.json --format all
@@ -72,12 +86,22 @@ See [docs/reports.md](docs/reports.md).
 
 ## Deterministic Checks
 
-The audit engine currently checks missing values, duplicate rows, constant
-columns, high cardinality, class imbalance, ID-like columns, and datatype risks.
+Phase 2 includes checks for:
+
+- Missing values
+- Duplicate rows
+- Constant columns
+- High-cardinality categorical columns
+- Class imbalance
+- Suspicious ID-like columns
+- Datatype risks such as numeric values stored as object strings
 
 ## Documentation
 
 - [Architecture](docs/architecture.md)
+- [Audit engine](docs/audit-engine.md)
+- [Issue schema](docs/issue-schema.md)
+- [Scoring](docs/scoring.md)
 - [Reports](docs/reports.md)
 - [Roadmap](docs/roadmap.md)
 - [Safety](docs/safety.md)

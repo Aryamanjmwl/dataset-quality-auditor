@@ -76,16 +76,22 @@ def _write_report_artifacts(
 def _print_audit_summary(audit_result: dict, generated_paths: list[Path]) -> None:
     profile = audit_result["profile"]
     score = audit_result["score"]
-    issues = list(audit_result["issues"])
-    counts = {
-        severity: sum(1 for issue in issues if issue["severity"] == severity)
-        for severity in ("critical", "warning", "info")
-    }
+    issues = audit_result["issues"]
+    assert isinstance(profile, dict)
+    assert isinstance(score, dict)
+    assert isinstance(issues, list)
+
+    issue_counts = {"critical": 0, "warning": 0, "info": 0}
+    for issue in issues:
+        assert isinstance(issue, dict)
+        severity = str(issue["severity"])
+        issue_counts[severity] = issue_counts.get(severity, 0) + 1
+
     table = Table.grid(padding=(0, 1))
     table.add_column(style="bold")
     table.add_column()
     table.add_row("Dataset:", str(audit_result["dataset_path"]))
-    table.add_row("Target:", str(audit_result.get("target_column")))
+    table.add_row("Target:", str(audit_result.get("target_column") or "not provided"))
     table.add_row("Rows:", str(profile["row_count"]))
     table.add_row("Columns:", str(profile["column_count"]))
     table.add_row("", "")
@@ -93,13 +99,14 @@ def _print_audit_summary(audit_result: dict, generated_paths: list[Path]) -> Non
     table.add_row("Band:", str(score["score_band"]))
     table.add_row("", "")
     table.add_row("Issues:", "")
-    table.add_row("Critical:", str(counts["critical"]))
-    table.add_row("Warnings:", str(counts["warning"]))
-    table.add_row("Info:", str(counts["info"]))
+    table.add_row("Critical:", str(issue_counts["critical"]))
+    table.add_row("Warnings:", str(issue_counts["warning"]))
+    table.add_row("Info:", str(issue_counts["info"]))
     table.add_row("", "")
     for index, path in enumerate(generated_paths):
         label = "Generated:" if index else "Audit JSON written to:"
         table.add_row(label, path.as_posix())
+
     console.print("[bold]Dataset Quality Auditor[/bold]\n")
     console.print(table)
 
@@ -128,7 +135,7 @@ def audit(
     ] = None,
     output_dir: Annotated[
         str,
-        typer.Option("--output-dir", help="Directory where reports are written."),
+        typer.Option("--output-dir", help="Directory where audit.json is written."),
     ] = "reports",
     format: Annotated[
         str,
@@ -149,6 +156,7 @@ def audit(
         )
     except (FileNotFoundError, ValueError) as exc:
         raise typer.BadParameter(str(exc)) from exc
+
     generated = [Path(output_dir) / "audit.json"]
     generated.extend(
         _write_report_artifacts(

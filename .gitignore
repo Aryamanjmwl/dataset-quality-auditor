@@ -52,7 +52,6 @@ coverage.xml
 .pytest-tmp/
 .pytest-run/
 cover/
-.pytest-tmp/
 # Generated reports
 /reports/
 

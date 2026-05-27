@@ -1,4 +1,4 @@
-"""High-cardinality check."""
+"""High-cardinality categorical checks."""
 
 import pandas as pd
 
@@ -11,18 +11,24 @@ from dataset_quality_auditor.audit.severity import MEDIUM, WARNING
 
 
 def check_high_cardinality(
-    df: pd.DataFrame, profile: dict[str, object], context: AuditContext
+    df: pd.DataFrame,
+    profile: dict[str, object],
+    context: AuditContext,
 ) -> list[Issue]:
     issues: list[Issue] = []
     columns = profile["columns"]
     assert isinstance(columns, dict)
+
     for column, column_profile in columns.items():
         assert isinstance(column_profile, dict)
         if column == context.target_column or bool(column_profile["is_numeric"]):
             continue
+
         unique_percent = float(column_profile["unique_percent"])
         if unique_percent < context.config["high_cardinality_threshold"]:
             continue
+
+        requires_review = unique_percent >= context.config["id_unique_ratio_threshold"]
         issues.append(
             Issue(
                 issue_id=issue_id("high_cardinality", str(column)),
@@ -37,21 +43,22 @@ def check_high_cardinality(
                     "column_role": column_profile["inferred_role"],
                 },
                 evidence=Evidence(
-                    "unique_percent",
-                    unique_percent,
-                    context.config["high_cardinality_threshold"],
-                    "observed_value >= threshold",
-                    {
+                    metric="unique_percent",
+                    observed_value=unique_percent,
+                    threshold=context.config["high_cardinality_threshold"],
+                    comparison="observed_value >= threshold",
+                    details={
                         "unique_count": int(column_profile["unique_count"]),
                         "total_rows": int(profile["row_count"]),
                         "unique_percent": unique_percent,
                     },
                 ),
-                ml_impact="High-cardinality categories can create unstable encodings.",
-                recommendation=HIGH_CARDINALITY,
-                requires_human_review=(
-                    unique_percent >= context.config["id_unique_ratio_threshold"]
+                ml_impact=(
+                    "High-cardinality categorical values can cause sparse "
+                    "features, leakage risk, or unstable encodings."
                 ),
+                recommendation=HIGH_CARDINALITY,
+                requires_human_review=requires_review,
                 reproducibility=reproducibility(
                     context,
                     {
@@ -65,4 +72,5 @@ def check_high_cardinality(
                 ),
             )
         )
+
     return issues

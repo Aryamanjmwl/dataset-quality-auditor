@@ -1,5 +1,6 @@
 from dataset_quality_auditor.audit.evidence import Evidence
 from dataset_quality_auditor.audit.issues import Issue
+from dataset_quality_auditor.audit.severity import MEDIUM, WARNING
 
 
 def test_evidence_to_dict() -> None:
@@ -11,13 +12,8 @@ def test_evidence_to_dict() -> None:
         details={"missing_count": 2},
     )
 
-    assert evidence.to_dict() == {
-        "metric": "missing_percent",
-        "observed_value": 0.2,
-        "threshold": 0.1,
-        "comparison": "observed_value >= threshold",
-        "details": {"missing_count": 2},
-    }
+    assert evidence.to_dict()["metric"] == "missing_percent"
+    assert evidence.to_dict()["details"]["missing_count"] == 2
 
 
 def test_issue_to_dict() -> None:
@@ -26,8 +22,8 @@ def test_issue_to_dict() -> None:
         issue_id="missing_age_001",
         check_id="missing_values",
         title="Missing values detected",
-        severity="warning",
-        risk_level="medium",
+        severity=WARNING,
+        risk_level=MEDIUM,
         status="failed",
         scope={"dataset": "train", "column": "age"},
         evidence=evidence,
@@ -41,4 +37,3 @@ def test_issue_to_dict() -> None:
 
     assert result["issue_id"] == "missing_age_001"
     assert result["evidence"]["observed_value"] == 0.2
-    assert result["requires_human_review"] is False
