@@ -31,12 +31,19 @@ def _recommendations(issues: list[dict[str, object]]) -> list[str]:
     return recommendations
 
 
+def _display_profile(audit_result: dict) -> dict[str, object]:
+    profile = audit_result["profile"]
+    if audit_result.get("mode") == "train_test":
+        return profile["train"]
+    return profile
+
+
 def generate_html_report(audit_result: dict) -> str:
     issues = list(audit_result.get("issues", []))
     template = _template_environment().get_template("report.html.j2")
     return template.render(
         audit=audit_result,
-        profile=audit_result["profile"],
+        profile=_display_profile(audit_result),
         score=audit_result["score"],
         issues=issues,
         issue_counts=_issue_counts(issues),

@@ -29,8 +29,15 @@ def _recommendations(issues: list[dict[str, object]]) -> list[str]:
     return recommendations
 
 
-def generate_markdown_report(audit_result: dict) -> str:
+def _display_profile(audit_result: dict) -> dict[str, object]:
     profile = audit_result["profile"]
+    if audit_result.get("mode") == "train_test":
+        return profile["train"]
+    return profile
+
+
+def generate_markdown_report(audit_result: dict) -> str:
+    profile = _display_profile(audit_result)
     score = audit_result["score"]
     metadata = audit_result["metadata"]
     issues = list(audit_result.get("issues", []))
@@ -45,6 +52,7 @@ def generate_markdown_report(audit_result: dict) -> str:
         "## Executive Summary",
         "",
         f"- Dataset path: `{audit_result['dataset_path']}`",
+        f"- Test dataset path: `{audit_result.get('test_dataset_path')}`",
         f"- Target column: `{audit_result.get('target_column')}`",
         f"- Row count: {profile['row_count']}",
         f"- Column count: {profile['column_count']}",
@@ -64,6 +72,7 @@ def generate_markdown_report(audit_result: dict) -> str:
         f"| Duplicate rows | {profile['duplicate_row_count']} |",
         f"| Duplicate percent | {_fmt(profile['duplicate_row_percent'])} |",
         f"| Target column | {_fmt(audit_result.get('target_column'))} |",
+        f"| Mode | {_fmt(audit_result.get('mode', 'single_dataset'))} |",
         f"| Audit ID | {audit_result['audit_id']} |",
         f"| Created at | {audit_result['created_at']} |",
         "",
