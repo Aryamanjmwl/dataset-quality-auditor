@@ -25,6 +25,8 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.0",
     "rich>=13.7",
     "typer>=0.12",
 ]
@@ -42,7 +44,7 @@ dqa = "dataset_quality_auditor.cli:app"
 include = ["dataset_quality_auditor*"]
 
 [tool.pytest.ini_options]
-addopts = "-ra"
+addopts = "-ra --basetemp=.pytest-tmp -p no:cacheprovider"
 testpaths = ["tests"]
 
 [tool.ruff]
