@@ -91,3 +91,96 @@ def sample_audit_result() -> dict[str, object]:
             "ai_generated": False,
         },
     }
+
+
+def sample_graph_audit_result() -> dict[str, object]:
+    result = sample_audit_result()
+    result["score"] = {
+        "score": 50,
+        "max_score": 100,
+        "score_band": "high_risk",
+        "deductions": [],
+    }
+    result["issues"] = [
+        {
+            "issue_id": "datatype_risk_income_001",
+            "check_id": "datatype_risks",
+            "title": "Numeric-looking values stored as text",
+            "severity": "info",
+            "risk_level": "low",
+            "status": "failed",
+            "scope": {"dataset": "train", "column": "income"},
+            "evidence": {
+                "metric": "numeric_parse_percent",
+                "observed_value": 0.9,
+                "threshold": 0.8,
+                "comparison": "observed_value >= threshold",
+                "details": {},
+            },
+            "ml_impact": "Implicit type conversion may make training brittle.",
+            "recommendation": "Add explicit schema/type validation.",
+            "requires_human_review": False,
+            "reproducibility": {"check_version": "0.1.0", "parameters": {}},
+        },
+        {
+            "issue_id": "target_leakage_score_001",
+            "check_id": "target_leakage_candidates",
+            "title": "Target leakage candidate detected",
+            "severity": "critical",
+            "risk_level": "high",
+            "status": "failed",
+            "scope": {"dataset": "train", "column": "final_score"},
+            "evidence": {
+                "metric": "leakage_signal",
+                "observed_value": "target_like_name",
+                "threshold": "candidate",
+                "comparison": "name contains target-like term",
+                "details": {},
+            },
+            "ml_impact": "Leakage candidates can inflate model evaluation.",
+            "recommendation": "Confirm prediction-time availability.",
+            "requires_human_review": True,
+            "reproducibility": {"check_version": "0.1.0", "parameters": {}},
+        },
+        {
+            "issue_id": "missing_values_age_001",
+            "check_id": "missing_values",
+            "title": "Missing values detected in feature column",
+            "severity": "warning",
+            "risk_level": "medium",
+            "status": "failed",
+            "scope": {"dataset": "train", "column": "age"},
+            "evidence": {
+                "metric": "missing_percent",
+                "observed_value": 0.2,
+                "threshold": 0.1,
+                "comparison": "observed_value >= threshold",
+                "details": {"missing_count": 2, "total_rows": 10},
+            },
+            "ml_impact": "Missing values can make model training unstable.",
+            "recommendation": "Review max missing percent and preprocessing.",
+            "requires_human_review": False,
+            "reproducibility": {"check_version": "0.1.0", "parameters": {}},
+        },
+        {
+            "issue_id": "id_like_customer_001",
+            "check_id": "id_like_columns",
+            "title": "ID-like column candidate detected",
+            "severity": "warning",
+            "risk_level": "medium",
+            "status": "failed",
+            "scope": {"dataset": "train", "column": "customer_id"},
+            "evidence": {
+                "metric": "unique_percent",
+                "observed_value": 0.99,
+                "threshold": 0.95,
+                "comparison": "observed_value >= threshold",
+                "details": {},
+            },
+            "ml_impact": "Identifier-like columns may not generalize.",
+            "recommendation": "Confirm whether this column is an ID.",
+            "requires_human_review": True,
+            "reproducibility": {"check_version": "0.1.0", "parameters": {}},
+        },
+    ]
+    return result

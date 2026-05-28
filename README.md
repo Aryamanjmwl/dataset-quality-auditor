@@ -110,10 +110,16 @@ See [docs/contracts.md](docs/contracts.md).
 AI review is currently available through a deterministic mock provider only. It
 reads `audit.json`, prioritizes existing deterministic issues, copies the
 readiness score and score band exactly, and writes `reports/ai_review.json`.
+A local graph-style workflow is also available for node-based review output.
 
 ```bash
 dqa review reports/audit.json --provider mock
+dqa review reports/audit.json --provider mock --workflow graph
 ```
+
+The graph workflow runs deterministic nodes for risk prioritization, safe fix
+recommendations, contract advice, Markdown report writing, and output
+validation. It writes `reports/ai_review.md` in addition to the guarded JSON.
 
 Future OpenAI and Ollama providers are planned, but they are not required and no
 external API calls are made in this phase.

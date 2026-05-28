@@ -47,3 +47,9 @@ dqa validate examples/datasets/classification_dirty.csv --contract contracts/cla
 ```bash
 dqa review reports/audit.json --provider mock
 ```
+
+## AI Review Graph Workflow
+
+```bash
+dqa review reports/audit.json --provider mock --workflow graph
+```

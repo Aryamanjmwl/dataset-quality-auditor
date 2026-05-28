@@ -36,3 +36,16 @@ Rules:
 - AI cannot modify datasets.
 - AI must reference deterministic issue IDs.
 - AI review metadata must identify deterministic source data.
+
+## Graph Workflow Safety
+
+The graph review workflow is local and deterministic in this phase. It does not
+call external APIs, require API keys, or mutate datasets.
+
+Graph nodes may prioritize, explain, and structure existing findings, but the
+final output is still rejected unless guardrails confirm:
+
+- Every referenced issue ID exists in the source `audit.json`.
+- Readiness score and score band are unchanged.
+- Metadata marks the review as AI-generated from deterministic source data.
+- Contract advice is advisory only and does not modify contract files.
