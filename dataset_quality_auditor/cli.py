@@ -368,6 +368,13 @@ def review(
         str,
         typer.Option("--output-dir", help="Directory where ai_review.json is written."),
     ] = "reports",
+    workflow: Annotated[
+        str,
+        typer.Option(
+            "--workflow",
+            help="Review workflow: provider or graph.",
+        ),
+    ] = "provider",
 ) -> None:
     """Generate a guarded AI review from deterministic audit JSON."""
     try:
@@ -375,15 +382,18 @@ def review(
             audit_json_path=audit_json,
             provider_name=provider,
             output_dir=output_dir,
+            workflow=workflow,
         )
     except (FileNotFoundError, ValueError) as exc:
         raise typer.BadParameter(str(exc)) from exc
 
     output_path = Path(output_dir) / "ai_review.json"
+    markdown_path = Path(output_dir) / "ai_review.md"
     table = Table.grid(padding=(0, 1))
     table.add_column(style="bold")
     table.add_column()
     table.add_row("Provider:", str(ai_review["provider"]))
+    table.add_row("Workflow:", workflow)
     table.add_row("Model:", str(ai_review["model"]))
     table.add_row("Audit ID:", str(ai_review["audit_id"]))
     table.add_row("Readiness score:", str(ai_review["readiness_score"]))
@@ -396,6 +406,8 @@ def review(
         str(len(ai_review["human_review_questions"])),
     )
     table.add_row("AI review written to:", output_path.as_posix())
+    if workflow.lower() == "graph" and markdown_path.exists():
+        table.add_row("Markdown review written to:", markdown_path.as_posix())
     console.print("[bold]Dataset Quality Auditor AI Review[/bold]\n")
     console.print(table)
 
