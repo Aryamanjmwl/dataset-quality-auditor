@@ -3,9 +3,9 @@
 Dataset Quality Auditor is designed to support AI-assisted review while keeping
 the deterministic audit engine as the source of truth.
 
-Phase 6A added the provider-agnostic review foundation and a deterministic mock
-provider. Phase 6B adds a local graph-style workflow. Neither path calls
-external APIs or requires API keys.
+The current implementation includes a provider-agnostic review foundation, a
+deterministic mock provider, and a local graph-style workflow. These paths do
+not call external APIs or require API keys.
 
 ## Deterministic Boundary
 
