@@ -46,6 +46,12 @@ dqa validate examples/datasets/classification_dirty.csv --contract contracts/cla
 dqa review reports/audit.json --provider mock --workflow graph
 ```
 
+Python example:
+
+```bash
+python quick_audit.py examples/datasets/classification_dirty.csv label
+```
+
 Generated runtime outputs are written to `reports/` and `contracts/`. Curated
 sample artifacts are committed under `examples/`.
 

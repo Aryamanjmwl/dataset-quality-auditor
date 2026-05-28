@@ -1,100 +1,61 @@
 #!/usr/bin/env python3
-"""
-Quick DQA Script for Heart Disease Data
-Usage: python quick_audit.py heart_disease.csv
+"""Run a minimal Dataset Quality Auditor example from Python.
+
+Usage:
+    python quick_audit.py examples/datasets/classification_dirty.csv label
 """
 
-import sys
-import pandas as pd
+from __future__ import annotations
+
+import argparse
 from pathlib import Path
 
+from dataset_quality_auditor.audit.engine import run_audit
 
-def quick_audit(csv_file, target_col="target"):
-    """Simple function to audit heart disease data"""
 
-    try:
-        # Import DQA
-        from dqa import AuditRunner, CSVDataLoader
-        from dqa.checks import (
-            MissingValuesCheck,
-            ClassImbalanceCheck,
-            OutlierDetectionCheck,
-            TargetLeakageCheck,
-            CorrelationRiskCheck,
-        )
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="Run a deterministic audit for a CSV dataset.",
+    )
+    parser.add_argument("dataset", help="Path to a CSV dataset.")
+    parser.add_argument(
+        "target",
+        nargs="?",
+        default=None,
+        help="Optional target column name.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        default="reports",
+        help="Directory where audit.json is written.",
+    )
+    args = parser.parse_args()
 
-        print("🔍 Starting Data Quality Audit...")
-        print(f"📁 File: {csv_file}")
-        print(f"🎯 Target: {target_col}")
-        print("-" * 50)
+    dataset = Path(args.dataset)
+    if not dataset.is_file():
+        parser.error(f"Dataset not found: {dataset}")
 
-        # Create auditor with heart disease relevant checks
-        auditor = AuditRunner(
-            checks=[
-                MissingValuesCheck(),
-                ClassImbalanceCheck(),
-                OutlierDetectionCheck(),
-                TargetLeakageCheck(),
-                CorrelationRiskCheck(),
-            ],
-            loader=CSVDataLoader(),
-        )
+    result = run_audit(
+        dataset_path=dataset.as_posix(),
+        target_column=args.target,
+        output_dir=args.output_dir,
+    )
+    score = result["score"]
+    profile = result["profile"]
+    assert isinstance(score, dict)
+    assert isinstance(profile, dict)
 
-        # Run audit
-        report = auditor.audit_csv(csv_file, target=target_col)
-
-        # Print results
-        print("📊 AUDIT RESULTS")
-        print(f"Health Score: {report.health_score}/100")
-        print(f"Dataset: {report.dataset.n_rows} rows, {report.dataset.n_cols} columns")
-        print(f"Issues Found: {len(report.findings)}")
-        print()
-
-        if report.findings:
-            print("🚨 ISSUES FOUND:")
-            for i, finding in enumerate(report.findings, 1):
-                print(f"{i}. [{finding.severity.value}] {finding.title}")
-                print(f"   {finding.description}")
-                if finding.recommendation:
-                    print(f"   💡 {finding.recommendation}")
-                print()
-        else:
-            print("✅ NO ISSUES FOUND - Your data looks great!")
-
-        # Quick data summary
-        print("📈 DATA SUMMARY:")
-        try:
-            df = pd.read_csv(csv_file)
-            print(f"Target distribution: {df[target_col].value_counts().to_dict()}")
-            print(".2f")
-            print(f"Missing values: {df.isnull().sum().sum()} total")
-        except Exception as e:
-            print(f"Could not load data summary: {e}")
-
-        return report
-
-    except ImportError:
-        print("❌ ERROR: DQA not installed!")
-        print(
-            "Run: pip install git+https://github.com/your-username/dataset-quality-auditor.git"
-        )
-        return None
-    except Exception as e:
-        print(f"❌ ERROR: {e}")
-        return None
+    print("Dataset Quality Auditor")
+    print(f"Dataset: {result['dataset_path']}")
+    print(f"Target: {result.get('target_column') or 'not provided'}")
+    print(f"Rows: {profile['row_count']}")
+    print(f"Columns: {profile['column_count']}")
+    print(f"Readiness Score: {score['score']}/{score['max_score']}")
+    print(f"Band: {score['score_band']}")
+    print(f"Issues: {len(result['issues'])}")
+    print(f"Audit JSON written to: {Path(args.output_dir) / 'audit.json'}")
+    return 0
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python quick_audit.py your_data.csv [target_column]")
-        print("Example: python quick_audit.py heart_disease.csv target")
-        sys.exit(1)
-
-    csv_file = sys.argv[1]
-    target_col = sys.argv[2] if len(sys.argv) > 2 else "target"
-
-    if not Path(csv_file).exists():
-        print(f"❌ File not found: {csv_file}")
-        sys.exit(1)
-
-    quick_audit(csv_file, target_col)
+    raise SystemExit(main())
