@@ -55,6 +55,7 @@ coverage.xml
 cover/
 # Generated reports
 /reports/
+/contracts/
 
 # Translations
 *.mo

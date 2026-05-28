@@ -1,0 +1,7 @@
+customer_id,age,income,segment,signup_date,region,label
+T004,38,71000,basic,2024-02-18,west,0
+S101,58,124000,enterprise,2024-05-01,east,1
+S102,61,132000,enterprise,2024-05-06,east,1
+S103,55,118000,trial,2024-05-12,west,0
+S104,48,109000,premium,2024-05-18,north,1
+S105,63,141000,trial,2024-06-01,south,1

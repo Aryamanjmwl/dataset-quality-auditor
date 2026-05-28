@@ -1,167 +1,187 @@
 # Dataset Quality Auditor
 
-Dataset Quality Auditor is a CLI-first Python package for auditing tabular
-machine learning datasets before training.
+[![CI](https://github.com/Aryamanjmwl/dataset-quality-auditor/actions/workflows/ci.yml/badge.svg)](https://github.com/Aryamanjmwl/dataset-quality-auditor/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.10%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
 
-The project is deterministic-first: the audit engine is the source of truth for
-findings, evidence, issue IDs, and readiness scoring. AI review is planned for a
-later phase, but AI will only explain and prioritize deterministic findings. It
-must not invent findings, change scores, or modify datasets.
+A deterministic-first, AI-assisted CLI for auditing machine learning datasets
+before training — with readiness scoring, reproducible reports, validation
+contracts, and guarded AI review.
 
-## Mission
+## Why This Exists
 
-Help ML engineers and data teams catch dataset readiness problems before model
-training while keeping audit results reproducible, inspectable, and safe for
-automation.
+ML projects often fail quietly before training starts: target leakage, unstable
+schemas, high-cardinality identifiers, train/test overlap, drift, missingness,
+and brittle data types can all make evaluation misleading. Dataset Quality
+Auditor helps catch those risks early from the command line.
 
-## Current Status
+This project is not positioned as a replacement for Great Expectations,
+Pandera, or Evidently. It is a lightweight ML-readiness auditor focused on
+deterministic issue evidence, scoring, reports, contracts, and guarded AI
+review.
 
-The repository includes the official Phase 2 deterministic audit core and the
-Phase 3 reporting layer. The `dqa audit` command loads a CSV dataset, profiles
-it, infers basic column roles, runs deterministic checks, calculates a readiness
-score, writes `reports/audit.json`, and prints a Rich terminal summary.
+## Key Features
 
-Reports can be generated during audit or regenerated later from the deterministic
-audit JSON. YAML data contracts can also be generated and used to validate later
-datasets.
+- CLI-first workflow with Typer and Rich.
+- Deterministic audit engine for tabular CSV datasets.
+- Single-dataset and train/test audit modes.
+- Checks for missingness, duplicates, constants, cardinality, imbalance,
+  ID-like columns, datatype risks, outliers, correlation, leakage candidates,
+  schema mismatch, overlap, and drift.
+- Deterministic readiness score with structured issue evidence.
+- JSON, Markdown, and self-contained HTML reports.
+- YAML data contract generation and validation.
+- Guarded mock AI review and local graph-style review workflow.
+- pytest, ruff, and GitHub Actions CI.
 
-## Installation
+## Quickstart
 
 ```bash
 pip install -e ".[dev]"
-```
 
-## Audit
-
-```bash
-dqa audit examples/datasets/classification_dirty.csv --target label
-dqa audit examples/datasets/classification_dirty.csv --target label --output-dir reports
 dqa audit examples/datasets/classification_dirty.csv --target label --format all
-dqa audit train.csv --test test.csv --target label
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
+dqa contract examples/datasets/classification_dirty.csv --target label
+dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
+dqa review reports/audit.json --provider mock --workflow graph
 ```
 
-## Example Output
+Generated runtime outputs are written to `reports/` and `contracts/`. Curated
+sample artifacts are committed under `examples/`.
 
-```text
-Dataset Quality Auditor
-
-Dataset: examples/datasets/classification_dirty.csv
-Target: label
-Rows: 10
-Columns: 7
-
-Readiness Score: 28/100
-Band: high_risk
-
-Issues:
-Critical: 1
-Warnings: 6
-Info: 1
-
-Audit JSON written to: reports/audit.json
-Generated: reports/audit_report.md
-Generated: reports/audit_report.html
-```
-
-Exact counts can change as deterministic checks evolve.
-
-## Reports
-
-Reports only present findings from deterministic audit JSON. They do not invent
-findings, change scores, or modify datasets.
+## CLI Usage Examples
 
 ```bash
-dqa report reports/audit.json --format json
-dqa report reports/audit.json --format markdown
+dqa version
+dqa audit examples/datasets/classification_dirty.csv --target label --format all
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
 dqa report reports/audit.json --format html
-dqa report reports/audit.json --format all
+dqa contract examples/datasets/classification_dirty.csv --target label
+dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
+dqa review reports/audit.json --provider mock
+dqa review reports/audit.json --provider mock --workflow graph
 ```
 
-Output files:
+## Example Outputs
+
+Audit and report commands create:
 
 - `reports/audit.json`
-- `reports/audit_report.json`
 - `reports/audit_report.md`
 - `reports/audit_report.html`
 
-See [docs/reports.md](docs/reports.md).
-
-## Data Contracts
-
-Contracts are deterministic YAML files inferred from observed dataset profiles.
-They capture required columns, logical types, missingness limits, numeric ranges,
-categorical allowed values, target metadata, and human-review hints for ID-like
-columns.
-
-```bash
-dqa contract examples/datasets/classification_dirty.csv --target label
-dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
-```
-
-Default outputs:
+Contract and validation commands create:
 
 - `contracts/classification_dirty_contract.yaml`
 - `reports/validation_result.json`
 
-See [docs/contracts.md](docs/contracts.md).
+AI review commands create:
 
-## AI Review
+- `reports/ai_review.json`
+- `reports/ai_review.md` when `--workflow graph` is used
 
-AI review is currently available through a deterministic mock provider only. It
-reads `audit.json`, prioritizes existing deterministic issues, copies the
-readiness score and score band exactly, and writes `reports/ai_review.json`.
-A local graph-style workflow is also available for node-based review output.
+Curated examples are available in:
+
+- `examples/reports/`
+- `examples/contracts/`
+- `examples/validation/`
+
+## Architecture Overview
+
+```text
+Typer CLI
+  -> deterministic audit engine
+      -> profiler
+      -> schema inference
+      -> check registry
+      -> readiness scoring
+  -> reports
+  -> contracts and validation
+  -> guarded AI review
+      -> provider workflow
+      -> graph workflow
+      -> guardrails
+```
+
+The deterministic audit engine is the source of truth. Reports, contracts, and
+AI review consume audit output instead of inventing findings.
+
+## Deterministic-First Safety Model
+
+- AI does not invent findings.
+- AI does not create issue IDs.
+- AI does not change readiness scores or score bands.
+- AI does not modify datasets.
+- AI output must reference deterministic issue IDs.
+- Unsupported AI review output is rejected by guardrails.
+
+## AI Review Workflow
+
+The current AI provider is a local deterministic mock provider. It requires no
+API keys and makes no external calls.
 
 ```bash
 dqa review reports/audit.json --provider mock
 dqa review reports/audit.json --provider mock --workflow graph
 ```
 
-The graph workflow runs deterministic nodes for risk prioritization, safe fix
-recommendations, contract advice, Markdown report writing, and output
-validation. It writes `reports/ai_review.md` in addition to the guarded JSON.
+The graph workflow runs local nodes for risk prioritization, safe fix
+recommendations, contract advice, Markdown review writing, and output
+validation. OpenAI-compatible and Ollama/local provider adapters are future
+work.
 
-Future OpenAI and Ollama providers are planned, but they are not required and no
-external API calls are made in this phase.
-
-See [docs/ai-review.md](docs/ai-review.md).
-
-## Deterministic Checks
-
-Phase 2 includes checks for:
-
-- Missing values
-- Duplicate rows
-- Constant columns
-- High-cardinality categorical columns
-- Class imbalance
-- Suspicious ID-like columns
-- Datatype risks such as numeric values stored as object strings
-- Outlier risk
-- Correlation risk
-- Target leakage candidates
-- Train/test schema mismatch, overlap, and drift when `--test` is provided
-
-## Documentation
-
-- [Architecture](docs/architecture.md)
-- [AI Review](docs/ai-review.md)
-- [Audit engine](docs/audit-engine.md)
-- [Checks](docs/checks.md)
-- [Issue schema](docs/issue-schema.md)
-- [Scoring](docs/scoring.md)
-- [Reports](docs/reports.md)
-- [Contracts](docs/contracts.md)
-- [Roadmap](docs/roadmap.md)
-- [Safety](docs/safety.md)
-
-## Development
+## Data Contracts
 
 ```bash
-pip install -e ".[dev]"
+dqa contract examples/datasets/classification_dirty.csv --target label
+dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
+```
+
+Contracts are inferred from observed deterministic profiles. They are useful
+starting points, not human-free governance. ID columns, sensitive fields, and
+prediction-time availability should still be reviewed.
+
+## Reports
+
+```bash
+dqa report reports/audit.json --format markdown
+dqa report reports/audit.json --format html
+dqa report reports/audit.json --format all
+```
+
+Reports only display deterministic audit findings and metadata. They do not
+modify audit scores or add new issues.
+
+## Roadmap
+
+Completed MVP foundations:
+
+- Package foundation and CI.
+- Deterministic audit engine and advanced ML checks.
+- Reports, contracts, validation, mock AI review, and graph workflow.
+- Curated public demo datasets and sample artifacts.
+
+Future work:
+
+- OpenAI-compatible provider.
+- Optional Ollama/local provider.
+- Optional real LangGraph integration.
+- More statistical drift tests.
+- Demo GIF or video.
+- v0.1.0 release.
+
+## Contributing
+
+Contributions are welcome. Please run the local quality gates before opening a
+pull request:
+
+```bash
 ruff check .
 python -m pytest
 ```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) and
+[CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## License
 

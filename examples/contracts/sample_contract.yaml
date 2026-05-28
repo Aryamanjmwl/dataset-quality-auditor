@@ -1,0 +1,137 @@
+contract_version: 0.1.0
+created_by: dataset-quality-auditor
+dataset:
+  source: examples/datasets/classification_dirty.csv
+  target_column: label
+  row_count_observed: 10
+  column_count_observed: 7
+columns:
+  customer_id:
+    required: true
+    role: feature
+    logical_type: categorical
+    pandas_dtype_observed: str
+    nullable: false
+    missing_percent_observed: 0.0
+    unique_percent_observed: 0.9
+    numeric: null
+    categorical:
+      allowed_values_observed: &id001
+      - CUST-001
+      - CUST-002
+      - CUST-003
+      - CUST-004
+      - CUST-005
+      - CUST-006
+      - CUST-007
+      - CUST-008
+      - CUST-009
+    constraints:
+      max_missing_percent: 0.05
+      allowed_values: *id001
+  age:
+    required: true
+    role: feature
+    logical_type: numeric
+    pandas_dtype_observed: float64
+    nullable: true
+    missing_percent_observed: 0.2
+    unique_percent_observed: 0.6
+    numeric:
+      min_observed: 23.0
+      max_observed: 64.0
+    categorical: null
+    constraints:
+      max_missing_percent: 0.25
+      min_value: 23.0
+      max_value: 64.0
+  income_text:
+    required: true
+    role: feature
+    logical_type: numeric
+    pandas_dtype_observed: int64
+    nullable: false
+    missing_percent_observed: 0.0
+    unique_percent_observed: 0.8
+    numeric:
+      min_observed: 39000.0
+      max_observed: 999999.0
+    categorical: null
+    constraints:
+      max_missing_percent: 0.05
+      min_value: 39000.0
+      max_value: 999999.0
+  city:
+    required: true
+    role: feature
+    logical_type: categorical
+    pandas_dtype_observed: str
+    nullable: false
+    missing_percent_observed: 0.0
+    unique_percent_observed: 0.5
+    numeric: null
+    categorical:
+      allowed_values_observed: &id002
+      - Berlin
+      - London
+      - Madrid
+      - Paris
+      - Rome
+    constraints:
+      max_missing_percent: 0.05
+      allowed_values: *id002
+  signup_date:
+    required: true
+    role: datetime_candidate
+    logical_type: datetime
+    pandas_dtype_observed: str
+    nullable: false
+    missing_percent_observed: 0.0
+    unique_percent_observed: 0.8
+    numeric: null
+    categorical: null
+    constraints:
+      max_missing_percent: 0.05
+  constant_feature:
+    required: true
+    role: feature
+    logical_type: categorical
+    pandas_dtype_observed: str
+    nullable: false
+    missing_percent_observed: 0.0
+    unique_percent_observed: 0.1
+    numeric: null
+    categorical:
+      allowed_values_observed: &id003
+      - active
+    constraints:
+      max_missing_percent: 0.05
+      allowed_values: *id003
+  label:
+    required: true
+    role: target
+    logical_type: numeric
+    pandas_dtype_observed: int64
+    nullable: false
+    missing_percent_observed: 0.0
+    unique_percent_observed: 0.2
+    numeric:
+      min_observed: 0.0
+      max_observed: 1.0
+    categorical: null
+    constraints:
+      max_missing_percent: 0.05
+      min_value: 0.0
+      max_value: 1.0
+target:
+  name: label
+  logical_type: categorical
+  classes_observed:
+  - '0'
+  - '1'
+  class_distribution_observed:
+    '0': 1
+    '1': 9
+metadata:
+  deterministic: true
+  ai_generated: false

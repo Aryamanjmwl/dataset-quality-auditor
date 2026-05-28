@@ -1,0 +1,241 @@
+{
+  "review_version": "0.1.0",
+  "provider": "mock",
+  "model": "deterministic-mock",
+  "audit_id": "sample-audit-001",
+  "readiness_score": 0,
+  "score_band": "high_risk",
+  "summary": "The graph review prioritized 13 deterministic issues. The readiness score is 0/100 with score band high_risk.",
+  "prioritized_issues": [
+    {
+      "issue_id": "duplicate_rows_dataset_001",
+      "priority": "high",
+      "severity": "critical",
+      "check_id": "duplicate_rows",
+      "reason": "Duplicate rows detected was reported by the deterministic audit with critical severity."
+    },
+    {
+      "issue_id": "target_leakage_candidate_customer_id_category_target_mapping_001",
+      "priority": "high",
+      "severity": "critical",
+      "check_id": "target_leakage_candidate",
+      "reason": "Target leakage candidate detected was reported by the deterministic audit with critical severity."
+    },
+    {
+      "issue_id": "target_leakage_candidate_income_text_target_correlation_001",
+      "priority": "high",
+      "severity": "critical",
+      "check_id": "target_leakage_candidate",
+      "reason": "Target leakage candidate detected was reported by the deterministic audit with critical severity."
+    },
+    {
+      "issue_id": "target_leakage_candidate_signup_date_category_target_mapping_001",
+      "priority": "high",
+      "severity": "critical",
+      "check_id": "target_leakage_candidate",
+      "reason": "Target leakage candidate detected was reported by the deterministic audit with critical severity."
+    },
+    {
+      "issue_id": "missing_values_age_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "missing_values",
+      "reason": "Missing values detected in feature column was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "constant_column_constant_feature_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "constant_columns",
+      "reason": "Constant feature column detected was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "high_cardinality_customer_id_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "high_cardinality",
+      "reason": "High-cardinality categorical column detected was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "high_cardinality_city_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "high_cardinality",
+      "reason": "High-cardinality categorical column detected was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "high_cardinality_signup_date_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "high_cardinality",
+      "reason": "High-cardinality categorical column detected was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "class_imbalance_label_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "class_imbalance",
+      "reason": "Target class imbalance detected was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "outlier_risk_age_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "outlier_risk",
+      "reason": "Numeric outlier risk detected was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "outlier_risk_income_text_001",
+      "priority": "medium",
+      "severity": "warning",
+      "check_id": "outlier_risk",
+      "reason": "Numeric outlier risk detected was reported by the deterministic audit with warning severity."
+    },
+    {
+      "issue_id": "id_like_customer_id_001",
+      "priority": "low",
+      "severity": "info",
+      "check_id": "id_like_columns",
+      "reason": "Suspicious ID-like column detected was reported by the deterministic audit with info severity."
+    }
+  ],
+  "safe_next_steps": [
+    {
+      "issue_id": "duplicate_rows_dataset_001",
+      "action": "Investigate duplicate records and decide whether they represent valid repeated observations before training.",
+      "why": "Duplicate rows can distort validation estimates and make models overfit repeated records.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "target_leakage_candidate_customer_id_category_target_mapping_001",
+      "action": "Manually review this finding before changing training data or pipeline behavior. Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.",
+      "why": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.",
+      "automation_level": "manual_review"
+    },
+    {
+      "issue_id": "target_leakage_candidate_income_text_target_correlation_001",
+      "action": "Manually review this finding before changing training data or pipeline behavior. Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.",
+      "why": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.",
+      "automation_level": "manual_review"
+    },
+    {
+      "issue_id": "target_leakage_candidate_signup_date_category_target_mapping_001",
+      "action": "Manually review this finding before changing training data or pipeline behavior. Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.",
+      "why": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.",
+      "automation_level": "manual_review"
+    },
+    {
+      "issue_id": "missing_values_age_001",
+      "action": "Handle missing values inside the preprocessing pipeline fitted only on training data.",
+      "why": "Missing values can make model training unstable if not handled consistently.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "constant_column_constant_feature_001",
+      "action": "Remove or ignore constant feature columns during modeling.",
+      "why": "Constant features do not provide useful model signal.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "high_cardinality_customer_id_001",
+      "action": "Confirm whether this column is an identifier or a usable model feature before training.",
+      "why": "High-cardinality categorical values can cause sparse features, leakage risk, or unstable encodings.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "high_cardinality_city_001",
+      "action": "Confirm whether this column is an identifier or a usable model feature before training.",
+      "why": "High-cardinality categorical values can cause sparse features, leakage risk, or unstable encodings.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "high_cardinality_signup_date_001",
+      "action": "Confirm whether this column is an identifier or a usable model feature before training.",
+      "why": "High-cardinality categorical values can cause sparse features, leakage risk, or unstable encodings.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "class_imbalance_label_001",
+      "action": "Use stratified validation and consider class-aware metrics, sampling, or weighting in the training pipeline.",
+      "why": "Imbalanced classes can produce misleading accuracy and weak minority-class performance.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "outlier_risk_age_001",
+      "action": "Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them.",
+      "why": "Outliers can dominate model training or distort scaling if not handled consistently.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "outlier_risk_income_text_001",
+      "action": "Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them.",
+      "why": "Outliers can dominate model training or distort scaling if not handled consistently.",
+      "automation_level": "safe_suggestion_only"
+    },
+    {
+      "issue_id": "id_like_customer_id_001",
+      "action": "Manually review this finding before changing training data or pipeline behavior. Confirm whether this column is an ID and whether it is available at prediction time.",
+      "why": "ID-like columns may create leakage or brittle memorization if they are not available or meaningful at prediction time.",
+      "automation_level": "manual_review"
+    }
+  ],
+  "human_review_questions": [
+    {
+      "issue_id": "target_leakage_candidate_customer_id_category_target_mapping_001",
+      "question": "Is this column or condition valid, available at prediction time, and appropriate for model training?",
+      "reason": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event."
+    },
+    {
+      "issue_id": "target_leakage_candidate_income_text_target_correlation_001",
+      "question": "Is this column or condition valid, available at prediction time, and appropriate for model training?",
+      "reason": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event."
+    },
+    {
+      "issue_id": "target_leakage_candidate_signup_date_category_target_mapping_001",
+      "question": "Is this column or condition valid, available at prediction time, and appropriate for model training?",
+      "reason": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event."
+    },
+    {
+      "issue_id": "id_like_customer_id_001",
+      "question": "Is this column or condition valid, available at prediction time, and appropriate for model training?",
+      "reason": "ID-like columns may create leakage or brittle memorization if they are not available or meaningful at prediction time."
+    }
+  ],
+  "contract_recommendations": [
+    {
+      "issue_id": "missing_values_age_001",
+      "rule_type": "max_missing_percent_review",
+      "column": "age",
+      "recommendation": "Review whether the data contract should encode this deterministic finding as an explicit validation rule.",
+      "reason": "Handle missing values inside the preprocessing pipeline fitted only on training data."
+    },
+    {
+      "issue_id": "id_like_customer_id_001",
+      "rule_type": "uniqueness_or_id_role_review",
+      "column": "customer_id",
+      "recommendation": "Review whether the data contract should encode this deterministic finding as an explicit validation rule.",
+      "reason": "Confirm whether this column is an ID and whether it is available at prediction time."
+    },
+    {
+      "issue_id": "outlier_risk_age_001",
+      "rule_type": "numeric_range_review",
+      "column": "age",
+      "recommendation": "Review whether the data contract should encode this deterministic finding as an explicit validation rule.",
+      "reason": "Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them."
+    },
+    {
+      "issue_id": "outlier_risk_income_text_001",
+      "rule_type": "numeric_range_review",
+      "column": "income_text",
+      "recommendation": "Review whether the data contract should encode this deterministic finding as an explicit validation rule.",
+      "reason": "Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them."
+    }
+  ],
+  "markdown_report": "# AI-Assisted Dataset Review\n\nThis AI-assisted review is generated from deterministic audit findings.\n\n## Readiness\n\n- Readiness score: 0/100\n- Score band: high_risk\n- Audit ID: sample-audit-001\n\n## Priority Summary\n\n- High priority: 4\n- Medium priority: 8\n- Low priority: 1\n\n## Prioritized Issues\n\n- `duplicate_rows_dataset_001`: high priority (critical, duplicate_rows) - Duplicate rows detected was reported by the deterministic audit with critical severity.\n- `target_leakage_candidate_customer_id_category_target_mapping_001`: high priority (critical, target_leakage_candidate) - Target leakage candidate detected was reported by the deterministic audit with critical severity.\n- `target_leakage_candidate_income_text_target_correlation_001`: high priority (critical, target_leakage_candidate) - Target leakage candidate detected was reported by the deterministic audit with critical severity.\n- `target_leakage_candidate_signup_date_category_target_mapping_001`: high priority (critical, target_leakage_candidate) - Target leakage candidate detected was reported by the deterministic audit with critical severity.\n- `missing_values_age_001`: medium priority (warning, missing_values) - Missing values detected in feature column was reported by the deterministic audit with warning severity.\n- `constant_column_constant_feature_001`: medium priority (warning, constant_columns) - Constant feature column detected was reported by the deterministic audit with warning severity.\n- `high_cardinality_customer_id_001`: medium priority (warning, high_cardinality) - High-cardinality categorical column detected was reported by the deterministic audit with warning severity.\n- `high_cardinality_city_001`: medium priority (warning, high_cardinality) - High-cardinality categorical column detected was reported by the deterministic audit with warning severity.\n- `high_cardinality_signup_date_001`: medium priority (warning, high_cardinality) - High-cardinality categorical column detected was reported by the deterministic audit with warning severity.\n- `class_imbalance_label_001`: medium priority (warning, class_imbalance) - Target class imbalance detected was reported by the deterministic audit with warning severity.\n- `outlier_risk_age_001`: medium priority (warning, outlier_risk) - Numeric outlier risk detected was reported by the deterministic audit with warning severity.\n- `outlier_risk_income_text_001`: medium priority (warning, outlier_risk) - Numeric outlier risk detected was reported by the deterministic audit with warning severity.\n- `id_like_customer_id_001`: low priority (info, id_like_columns) - Suspicious ID-like column detected was reported by the deterministic audit with info severity.\n\n## Safe Next Steps\n\n- `duplicate_rows_dataset_001`: Investigate duplicate records and decide whether they represent valid repeated observations before training. (safe_suggestion_only)\n- `target_leakage_candidate_customer_id_category_target_mapping_001`: Manually review this finding before changing training data or pipeline behavior. Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event. (manual_review)\n- `target_leakage_candidate_income_text_target_correlation_001`: Manually review this finding before changing training data or pipeline behavior. Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event. (manual_review)\n- `target_leakage_candidate_signup_date_category_target_mapping_001`: Manually review this finding before changing training data or pipeline behavior. Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event. (manual_review)\n- `missing_values_age_001`: Handle missing values inside the preprocessing pipeline fitted only on training data. (safe_suggestion_only)\n- `constant_column_constant_feature_001`: Remove or ignore constant feature columns during modeling. (safe_suggestion_only)\n- `high_cardinality_customer_id_001`: Confirm whether this column is an identifier or a usable model feature before training. (safe_suggestion_only)\n- `high_cardinality_city_001`: Confirm whether this column is an identifier or a usable model feature before training. (safe_suggestion_only)\n- `high_cardinality_signup_date_001`: Confirm whether this column is an identifier or a usable model feature before training. (safe_suggestion_only)\n- `class_imbalance_label_001`: Use stratified validation and consider class-aware metrics, sampling, or weighting in the training pipeline. (safe_suggestion_only)\n- `outlier_risk_age_001`: Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them. (safe_suggestion_only)\n- `outlier_risk_income_text_001`: Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them. (safe_suggestion_only)\n- `id_like_customer_id_001`: Manually review this finding before changing training data or pipeline behavior. Confirm whether this column is an ID and whether it is available at prediction time. (manual_review)\n\n## Human Review Questions\n\n- `target_leakage_candidate_customer_id_category_target_mapping_001`: Is this column or condition valid, available at prediction time, and appropriate for model training? Reason: A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.\n- `target_leakage_candidate_income_text_target_correlation_001`: Is this column or condition valid, available at prediction time, and appropriate for model training? Reason: A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.\n- `target_leakage_candidate_signup_date_category_target_mapping_001`: Is this column or condition valid, available at prediction time, and appropriate for model training? Reason: A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.\n- `id_like_customer_id_001`: Is this column or condition valid, available at prediction time, and appropriate for model training? Reason: ID-like columns may create leakage or brittle memorization if they are not available or meaningful at prediction time.\n\n## Contract Advice\n\n- `missing_values_age_001`: max_missing_percent_review for `age` - Review whether the data contract should encode this deterministic finding as an explicit validation rule.\n- `id_like_customer_id_001`: uniqueness_or_id_role_review for `customer_id` - Review whether the data contract should encode this deterministic finding as an explicit validation rule.\n- `outlier_risk_age_001`: numeric_range_review for `age` - Review whether the data contract should encode this deterministic finding as an explicit validation rule.\n- `outlier_risk_income_text_001`: numeric_range_review for `income_text` - Review whether the data contract should encode this deterministic finding as an explicit validation rule.\n",
+  "metadata": {
+    "deterministic_source": true,
+    "ai_generated": true,
+    "source_audit_json": "examples/reports/sample_audit.json",
+    "workflow": "graph"
+  }
+}

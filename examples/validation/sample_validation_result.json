@@ -1,0 +1,358 @@
+{
+  "passed": true,
+  "contract_path": "examples/contracts/sample_contract.yaml",
+  "dataset_path": "examples/datasets/classification_dirty.csv",
+  "summary": {
+    "total_checks": 36,
+    "passed_checks": 36,
+    "failed_checks": 0
+  },
+  "checks": [
+    {
+      "rule_id": "column_required_customer_id",
+      "status": "passed",
+      "severity": "critical",
+      "column": "customer_id",
+      "message": "Required column customer_id exists.",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "rule_id": "type_compatible_customer_id",
+      "status": "passed",
+      "severity": "warning",
+      "column": "customer_id",
+      "message": "Column customer_id is compatible with logical type categorical.",
+      "expected": "categorical",
+      "observed": "str"
+    },
+    {
+      "rule_id": "nullable_customer_id",
+      "status": "passed",
+      "severity": "warning",
+      "column": "customer_id",
+      "message": "Column customer_id has no missing values when nullable is false.",
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "rule_id": "max_missing_percent_customer_id",
+      "status": "passed",
+      "severity": "warning",
+      "column": "customer_id",
+      "message": "Column customer_id missing percent is within contract.",
+      "expected": 0.05,
+      "observed": 0.0
+    },
+    {
+      "rule_id": "allowed_values_customer_id",
+      "status": "passed",
+      "severity": "warning",
+      "column": "customer_id",
+      "message": "Column customer_id values are within allowed values.",
+      "expected": [
+        "CUST-001",
+        "CUST-002",
+        "CUST-003",
+        "CUST-004",
+        "CUST-005",
+        "CUST-006",
+        "CUST-007",
+        "CUST-008",
+        "CUST-009"
+      ],
+      "observed": []
+    },
+    {
+      "rule_id": "column_required_age",
+      "status": "passed",
+      "severity": "critical",
+      "column": "age",
+      "message": "Required column age exists.",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "rule_id": "type_compatible_age",
+      "status": "passed",
+      "severity": "warning",
+      "column": "age",
+      "message": "Column age is compatible with logical type numeric.",
+      "expected": "numeric",
+      "observed": "float64"
+    },
+    {
+      "rule_id": "max_missing_percent_age",
+      "status": "passed",
+      "severity": "warning",
+      "column": "age",
+      "message": "Column age missing percent is within contract.",
+      "expected": 0.25,
+      "observed": 0.2
+    },
+    {
+      "rule_id": "min_value_age",
+      "status": "passed",
+      "severity": "warning",
+      "column": "age",
+      "message": "Column age minimum is within contract.",
+      "expected": 23.0,
+      "observed": 23.0
+    },
+    {
+      "rule_id": "max_value_age",
+      "status": "passed",
+      "severity": "warning",
+      "column": "age",
+      "message": "Column age maximum is within contract.",
+      "expected": 64.0,
+      "observed": 64.0
+    },
+    {
+      "rule_id": "column_required_income_text",
+      "status": "passed",
+      "severity": "critical",
+      "column": "income_text",
+      "message": "Required column income_text exists.",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "rule_id": "type_compatible_income_text",
+      "status": "passed",
+      "severity": "warning",
+      "column": "income_text",
+      "message": "Column income_text is compatible with logical type numeric.",
+      "expected": "numeric",
+      "observed": "int64"
+    },
+    {
+      "rule_id": "nullable_income_text",
+      "status": "passed",
+      "severity": "warning",
+      "column": "income_text",
+      "message": "Column income_text has no missing values when nullable is false.",
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "rule_id": "max_missing_percent_income_text",
+      "status": "passed",
+      "severity": "warning",
+      "column": "income_text",
+      "message": "Column income_text missing percent is within contract.",
+      "expected": 0.05,
+      "observed": 0.0
+    },
+    {
+      "rule_id": "min_value_income_text",
+      "status": "passed",
+      "severity": "warning",
+      "column": "income_text",
+      "message": "Column income_text minimum is within contract.",
+      "expected": 39000.0,
+      "observed": 39000.0
+    },
+    {
+      "rule_id": "max_value_income_text",
+      "status": "passed",
+      "severity": "warning",
+      "column": "income_text",
+      "message": "Column income_text maximum is within contract.",
+      "expected": 999999.0,
+      "observed": 999999.0
+    },
+    {
+      "rule_id": "column_required_city",
+      "status": "passed",
+      "severity": "critical",
+      "column": "city",
+      "message": "Required column city exists.",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "rule_id": "type_compatible_city",
+      "status": "passed",
+      "severity": "warning",
+      "column": "city",
+      "message": "Column city is compatible with logical type categorical.",
+      "expected": "categorical",
+      "observed": "str"
+    },
+    {
+      "rule_id": "nullable_city",
+      "status": "passed",
+      "severity": "warning",
+      "column": "city",
+      "message": "Column city has no missing values when nullable is false.",
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "rule_id": "max_missing_percent_city",
+      "status": "passed",
+      "severity": "warning",
+      "column": "city",
+      "message": "Column city missing percent is within contract.",
+      "expected": 0.05,
+      "observed": 0.0
+    },
+    {
+      "rule_id": "allowed_values_city",
+      "status": "passed",
+      "severity": "warning",
+      "column": "city",
+      "message": "Column city values are within allowed values.",
+      "expected": [
+        "Berlin",
+        "London",
+        "Madrid",
+        "Paris",
+        "Rome"
+      ],
+      "observed": []
+    },
+    {
+      "rule_id": "column_required_signup_date",
+      "status": "passed",
+      "severity": "critical",
+      "column": "signup_date",
+      "message": "Required column signup_date exists.",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "rule_id": "type_compatible_signup_date",
+      "status": "passed",
+      "severity": "warning",
+      "column": "signup_date",
+      "message": "Column signup_date is compatible with logical type datetime.",
+      "expected": "datetime",
+      "observed": "str"
+    },
+    {
+      "rule_id": "nullable_signup_date",
+      "status": "passed",
+      "severity": "warning",
+      "column": "signup_date",
+      "message": "Column signup_date has no missing values when nullable is false.",
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "rule_id": "max_missing_percent_signup_date",
+      "status": "passed",
+      "severity": "warning",
+      "column": "signup_date",
+      "message": "Column signup_date missing percent is within contract.",
+      "expected": 0.05,
+      "observed": 0.0
+    },
+    {
+      "rule_id": "column_required_constant_feature",
+      "status": "passed",
+      "severity": "critical",
+      "column": "constant_feature",
+      "message": "Required column constant_feature exists.",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "rule_id": "type_compatible_constant_feature",
+      "status": "passed",
+      "severity": "warning",
+      "column": "constant_feature",
+      "message": "Column constant_feature is compatible with logical type categorical.",
+      "expected": "categorical",
+      "observed": "str"
+    },
+    {
+      "rule_id": "nullable_constant_feature",
+      "status": "passed",
+      "severity": "warning",
+      "column": "constant_feature",
+      "message": "Column constant_feature has no missing values when nullable is false.",
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "rule_id": "max_missing_percent_constant_feature",
+      "status": "passed",
+      "severity": "warning",
+      "column": "constant_feature",
+      "message": "Column constant_feature missing percent is within contract.",
+      "expected": 0.05,
+      "observed": 0.0
+    },
+    {
+      "rule_id": "allowed_values_constant_feature",
+      "status": "passed",
+      "severity": "warning",
+      "column": "constant_feature",
+      "message": "Column constant_feature values are within allowed values.",
+      "expected": [
+        "active"
+      ],
+      "observed": []
+    },
+    {
+      "rule_id": "column_required_label",
+      "status": "passed",
+      "severity": "critical",
+      "column": "label",
+      "message": "Required column label exists.",
+      "expected": true,
+      "observed": true
+    },
+    {
+      "rule_id": "type_compatible_label",
+      "status": "passed",
+      "severity": "warning",
+      "column": "label",
+      "message": "Column label is compatible with logical type numeric.",
+      "expected": "numeric",
+      "observed": "int64"
+    },
+    {
+      "rule_id": "nullable_label",
+      "status": "passed",
+      "severity": "warning",
+      "column": "label",
+      "message": "Column label has no missing values when nullable is false.",
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "rule_id": "max_missing_percent_label",
+      "status": "passed",
+      "severity": "warning",
+      "column": "label",
+      "message": "Column label missing percent is within contract.",
+      "expected": 0.05,
+      "observed": 0.0
+    },
+    {
+      "rule_id": "min_value_label",
+      "status": "passed",
+      "severity": "warning",
+      "column": "label",
+      "message": "Column label minimum is within contract.",
+      "expected": 0.0,
+      "observed": 0.0
+    },
+    {
+      "rule_id": "max_value_label",
+      "status": "passed",
+      "severity": "warning",
+      "column": "label",
+      "message": "Column label maximum is within contract.",
+      "expected": 1.0,
+      "observed": 1.0
+    }
+  ],
+  "metadata": {
+    "deterministic": true,
+    "ai_generated": false
+  }
+}

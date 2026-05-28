@@ -18,6 +18,12 @@ dqa audit examples/datasets/classification_dirty.csv --target label
 dqa audit examples/datasets/classification_dirty.csv --target label --format all
 ```
 
+## Audit Train/Test Split
+
+```bash
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
+```
+
 ## Regenerate Markdown Report
 
 ```bash
@@ -51,5 +57,16 @@ dqa review reports/audit.json --provider mock
 ## AI Review Graph Workflow
 
 ```bash
+dqa review reports/audit.json --provider mock --workflow graph
+```
+
+## Public Demo Sequence
+
+```bash
+pip install -e ".[dev]"
+dqa audit examples/datasets/classification_dirty.csv --target label --format all
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
+dqa contract examples/datasets/classification_dirty.csv --target label
+dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
 dqa review reports/audit.json --provider mock --workflow graph
 ```

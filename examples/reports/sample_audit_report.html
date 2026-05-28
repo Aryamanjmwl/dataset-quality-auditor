@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dataset Quality Audit Report</title>
+  <style>
+    :root { color-scheme: light; --ink: #172033; --muted: #64748b; --line: #d8dee9; --bg: #f7f9fc; --card: #ffffff; --critical: #b42318; --warning: #b54708; --info: #175cd3; }
+    body { margin: 0; font-family: Inter, Segoe UI, Arial, sans-serif; color: var(--ink); background: var(--bg); }
+    main { max-width: 1180px; margin: 0 auto; padding: 32px 20px 48px; }
+    h1 { margin: 0 0 8px; font-size: 32px; }
+    h2 { margin-top: 32px; font-size: 20px; }
+    p { color: var(--muted); }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px; }
+    .score { font-size: 36px; font-weight: 760; }
+    .label { color: var(--muted); font-size: 13px; text-transform: uppercase; }
+    table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { background: #eef2f7; font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+    .critical { color: #fff; background: var(--critical); }
+    .warning { color: #fff; background: var(--warning); }
+    .info { color: #fff; background: var(--info); }
+    code { background: #eef2f7; padding: 2px 4px; border-radius: 4px; }
+    ul { background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 16px 16px 16px 34px; }
+    @media (max-width: 700px) { main { padding: 20px 12px; } table { font-size: 13px; } th, td { padding: 8px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Dataset Quality Audit Report</h1>
+    <p>This report is generated from deterministic audit results.</p>
+
+    <section class="grid">
+      <div class="card">
+        <div class="label">Readiness Score</div>
+        <div class="score">0/100</div>
+        <strong>high_risk</strong>
+      </div>
+      <div class="card"><div class="label">Critical</div><div class="score">4</div></div>
+      <div class="card"><div class="label">Warning</div><div class="score">8</div></div>
+      <div class="card"><div class="label">Info</div><div class="score">1</div></div>
+    </section>
+
+    <h2>Dataset Overview</h2>
+    <table>
+      <tbody>
+        <tr><th>Dataset</th><td><code>examples/datasets/classification_dirty.csv</code></td></tr>
+        <tr><th>Mode</th><td>single_dataset</td></tr>
+        <tr><th>Test dataset</th><td>None</td></tr>
+        <tr><th>Target</th><td>label</td></tr>
+        <tr><th>Rows</th><td>10</td></tr>
+        <tr><th>Columns</th><td>7</td></tr>
+        <tr><th>Duplicate rows</th><td>1</td></tr>
+        <tr><th>Duplicate percent</th><td>0.1</td></tr>
+        <tr><th>Audit ID</th><td><code>sample-audit-001</code></td></tr>
+        <tr><th>Created at</th><td>2026-05-28T00:00:00+00:00</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Issues</h2>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Severity</th><th>Title</th><th>Column</th><th>Evidence</th><th>Recommendation</th><th>Human Review</th></tr>
+      </thead>
+      <tbody>
+      
+        <tr>
+          <td><code>missing_values_age_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>Missing values detected in feature column</td>
+          <td>age</td>
+          <td>missing_percent: 0.2 (threshold 0.1)</td>
+          <td>Handle missing values inside the preprocessing pipeline fitted only on training data.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>duplicate_rows_dataset_001</code></td>
+          <td><span class="badge critical">critical</span></td>
+          <td>Duplicate rows detected</td>
+          <td>None</td>
+          <td>duplicate_row_percent: 0.1 (threshold 0.1)</td>
+          <td>Investigate duplicate records and decide whether they represent valid repeated observations before training.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>constant_column_constant_feature_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>Constant feature column detected</td>
+          <td>constant_feature</td>
+          <td>unique_count: 1 (threshold 1)</td>
+          <td>Remove or ignore constant feature columns during modeling.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>high_cardinality_customer_id_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>High-cardinality categorical column detected</td>
+          <td>customer_id</td>
+          <td>unique_percent: 0.9 (threshold 0.5)</td>
+          <td>Confirm whether this column is an identifier or a usable model feature before training.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>high_cardinality_city_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>High-cardinality categorical column detected</td>
+          <td>city</td>
+          <td>unique_percent: 0.5 (threshold 0.5)</td>
+          <td>Confirm whether this column is an identifier or a usable model feature before training.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>high_cardinality_signup_date_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>High-cardinality categorical column detected</td>
+          <td>signup_date</td>
+          <td>unique_percent: 0.8 (threshold 0.5)</td>
+          <td>Confirm whether this column is an identifier or a usable model feature before training.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>class_imbalance_label_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>Target class imbalance detected</td>
+          <td>label</td>
+          <td>dominant_class_ratio: 0.9 (threshold 0.8)</td>
+          <td>Use stratified validation and consider class-aware metrics, sampling, or weighting in the training pipeline.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>id_like_customer_id_001</code></td>
+          <td><span class="badge info">info</span></td>
+          <td>Suspicious ID-like column detected</td>
+          <td>customer_id</td>
+          <td>unique_percent: 0.9 (threshold 0.95)</td>
+          <td>Confirm whether this column is an ID and whether it is available at prediction time.</td>
+          <td>True</td>
+        </tr>
+      
+        <tr>
+          <td><code>outlier_risk_age_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>Numeric outlier risk detected</td>
+          <td>age</td>
+          <td>outlier_percent: 0.1 (threshold 0.05)</td>
+          <td>Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>outlier_risk_income_text_001</code></td>
+          <td><span class="badge warning">warning</span></td>
+          <td>Numeric outlier risk detected</td>
+          <td>income_text</td>
+          <td>outlier_percent: 0.1 (threshold 0.05)</td>
+          <td>Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them.</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>target_leakage_candidate_customer_id_category_target_mapping_001</code></td>
+          <td><span class="badge critical">critical</span></td>
+          <td>Target leakage candidate detected</td>
+          <td>customer_id</td>
+          <td>leakage_candidate_signal: 1.0 (threshold 0.98)</td>
+          <td>Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.</td>
+          <td>True</td>
+        </tr>
+      
+        <tr>
+          <td><code>target_leakage_candidate_income_text_target_correlation_001</code></td>
+          <td><span class="badge critical">critical</span></td>
+          <td>Target leakage candidate detected</td>
+          <td>income_text</td>
+          <td>leakage_candidate_signal: 0.9966397570774854 (threshold 0.95)</td>
+          <td>Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.</td>
+          <td>True</td>
+        </tr>
+      
+        <tr>
+          <td><code>target_leakage_candidate_signup_date_category_target_mapping_001</code></td>
+          <td><span class="badge critical">critical</span></td>
+          <td>Target leakage candidate detected</td>
+          <td>signup_date</td>
+          <td>leakage_candidate_signal: 1.0 (threshold 0.98)</td>
+          <td>Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.</td>
+          <td>True</td>
+        </tr>
+      
+      </tbody>
+    </table>
+
+    <h2>Column Overview</h2>
+    <table>
+      <thead><tr><th>Column</th><th>Role</th><th>Type</th><th>Missing %</th><th>Unique %</th><th>Numeric</th><th>Categorical</th></tr></thead>
+      <tbody>
+      
+        <tr>
+          <td><code>customer_id</code></td>
+          <td>feature</td>
+          <td>str</td>
+          <td>0</td>
+          <td>0.9</td>
+          <td>False</td>
+          <td>True</td>
+        </tr>
+      
+        <tr>
+          <td><code>age</code></td>
+          <td>feature</td>
+          <td>float64</td>
+          <td>0.2</td>
+          <td>0.6</td>
+          <td>True</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>income_text</code></td>
+          <td>feature</td>
+          <td>int64</td>
+          <td>0</td>
+          <td>0.8</td>
+          <td>True</td>
+          <td>False</td>
+        </tr>
+      
+        <tr>
+          <td><code>city</code></td>
+          <td>feature</td>
+          <td>str</td>
+          <td>0</td>
+          <td>0.5</td>
+          <td>False</td>
+          <td>True</td>
+        </tr>
+      
+        <tr>
+          <td><code>signup_date</code></td>
+          <td>datetime_candidate</td>
+          <td>str</td>
+          <td>0</td>
+          <td>0.8</td>
+          <td>False</td>
+          <td>True</td>
+        </tr>
+      
+        <tr>
+          <td><code>constant_feature</code></td>
+          <td>feature</td>
+          <td>str</td>
+          <td>0</td>
+          <td>0.1</td>
+          <td>False</td>
+          <td>True</td>
+        </tr>
+      
+        <tr>
+          <td><code>label</code></td>
+          <td>target</td>
+          <td>int64</td>
+          <td>0</td>
+          <td>0.2</td>
+          <td>True</td>
+          <td>False</td>
+        </tr>
+      
+      </tbody>
+    </table>
+
+    <h2>Recommendations</h2>
+    <ul>
+    
+      <li>Handle missing values inside the preprocessing pipeline fitted only on training data.</li>
+    
+      <li>Investigate duplicate records and decide whether they represent valid repeated observations before training.</li>
+    
+      <li>Remove or ignore constant feature columns during modeling.</li>
+    
+      <li>Confirm whether this column is an identifier or a usable model feature before training.</li>
+    
+      <li>Use stratified validation and consider class-aware metrics, sampling, or weighting in the training pipeline.</li>
+    
+      <li>Confirm whether this column is an ID and whether it is available at prediction time.</li>
+    
+      <li>Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them.</li>
+    
+      <li>Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.</li>
+    
+    </ul>
+
+    <h2>Metadata</h2>
+    <table>
+      <tbody>
+        <tr><th>Package version</th><td>0.1.0</td></tr>
+        <tr><th>Engine version</th><td>0.1.0</td></tr>
+        <tr><th>Deterministic</th><td>True</td></tr>
+        <tr><th>AI generated</th><td>False</td></tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

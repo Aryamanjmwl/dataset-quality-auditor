@@ -1,0 +1,776 @@
+{
+  "audit_id": "sample-audit-001",
+  "created_at": "2026-05-28T00:00:00+00:00",
+  "mode": "single_dataset",
+  "dataset_path": "examples/datasets/classification_dirty.csv",
+  "test_dataset_path": null,
+  "target_column": "label",
+  "profile": {
+    "row_count": 10,
+    "column_count": 7,
+    "target_column": "label",
+    "duplicate_row_count": 1,
+    "duplicate_row_percent": 0.1,
+    "columns": {
+      "customer_id": {
+        "name": "customer_id",
+        "dtype": "str",
+        "inferred_role": "feature",
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unique_count": 9,
+        "unique_percent": 0.9,
+        "is_numeric": false,
+        "is_categorical": true,
+        "numeric_summary": null,
+        "categorical_summary": {
+          "top_values": [
+            {
+              "value": "CUST-004",
+              "count": 2
+            },
+            {
+              "value": "CUST-001",
+              "count": 1
+            },
+            {
+              "value": "CUST-002",
+              "count": 1
+            },
+            {
+              "value": "CUST-003",
+              "count": 1
+            },
+            {
+              "value": "CUST-005",
+              "count": 1
+            },
+            {
+              "value": "CUST-006",
+              "count": 1
+            },
+            {
+              "value": "CUST-007",
+              "count": 1
+            },
+            {
+              "value": "CUST-008",
+              "count": 1
+            },
+            {
+              "value": "CUST-009",
+              "count": 1
+            }
+          ]
+        }
+      },
+      "age": {
+        "name": "age",
+        "dtype": "float64",
+        "inferred_role": "feature",
+        "missing_count": 2,
+        "missing_percent": 0.2,
+        "unique_count": 6,
+        "unique_percent": 0.6,
+        "is_numeric": true,
+        "is_categorical": false,
+        "numeric_summary": {
+          "min": 23.0,
+          "max": 64.0,
+          "mean": 41.125,
+          "std": 13.474181660812334
+        },
+        "categorical_summary": null
+      },
+      "income_text": {
+        "name": "income_text",
+        "dtype": "int64",
+        "inferred_role": "feature",
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unique_count": 8,
+        "unique_percent": 0.8,
+        "is_numeric": true,
+        "is_categorical": false,
+        "numeric_summary": {
+          "min": 39000.0,
+          "max": 999999.0,
+          "mean": 163299.9,
+          "std": 294977.29227121116
+        },
+        "categorical_summary": null
+      },
+      "city": {
+        "name": "city",
+        "dtype": "str",
+        "inferred_role": "feature",
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unique_count": 5,
+        "unique_percent": 0.5,
+        "is_numeric": false,
+        "is_categorical": true,
+        "numeric_summary": null,
+        "categorical_summary": {
+          "top_values": [
+            {
+              "value": "London",
+              "count": 4
+            },
+            {
+              "value": "Berlin",
+              "count": 2
+            },
+            {
+              "value": "Paris",
+              "count": 2
+            },
+            {
+              "value": "Madrid",
+              "count": 1
+            },
+            {
+              "value": "Rome",
+              "count": 1
+            }
+          ]
+        }
+      },
+      "signup_date": {
+        "name": "signup_date",
+        "dtype": "str",
+        "inferred_role": "datetime_candidate",
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unique_count": 8,
+        "unique_percent": 0.8,
+        "is_numeric": false,
+        "is_categorical": true,
+        "numeric_summary": null,
+        "categorical_summary": {
+          "top_values": [
+            {
+              "value": "2025-01-12",
+              "count": 3
+            },
+            {
+              "value": "2025-01-10",
+              "count": 1
+            },
+            {
+              "value": "2025-01-11",
+              "count": 1
+            },
+            {
+              "value": "2025-01-13",
+              "count": 1
+            },
+            {
+              "value": "2025-01-14",
+              "count": 1
+            },
+            {
+              "value": "2025-01-15",
+              "count": 1
+            },
+            {
+              "value": "2025-01-16",
+              "count": 1
+            },
+            {
+              "value": "2025-01-17",
+              "count": 1
+            }
+          ]
+        }
+      },
+      "constant_feature": {
+        "name": "constant_feature",
+        "dtype": "str",
+        "inferred_role": "feature",
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unique_count": 1,
+        "unique_percent": 0.1,
+        "is_numeric": false,
+        "is_categorical": true,
+        "numeric_summary": null,
+        "categorical_summary": {
+          "top_values": [
+            {
+              "value": "active",
+              "count": 10
+            }
+          ]
+        }
+      },
+      "label": {
+        "name": "label",
+        "dtype": "int64",
+        "inferred_role": "target",
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unique_count": 2,
+        "unique_percent": 0.2,
+        "is_numeric": true,
+        "is_categorical": false,
+        "numeric_summary": {
+          "min": 0.0,
+          "max": 1.0,
+          "mean": 0.9,
+          "std": 0.31622776601683794
+        },
+        "categorical_summary": null
+      }
+    }
+  },
+  "issues": [
+    {
+      "issue_id": "missing_values_age_001",
+      "check_id": "missing_values",
+      "title": "Missing values detected in feature column",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "age",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "missing_percent",
+        "observed_value": 0.2,
+        "threshold": 0.1,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "missing_count": 2,
+          "total_rows": 10,
+          "missing_percent": 0.2
+        }
+      },
+      "ml_impact": "Missing values can make model training unstable if not handled consistently.",
+      "recommendation": "Handle missing values inside the preprocessing pipeline fitted only on training data.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "missing_warning_threshold": 0.1
+        }
+      }
+    },
+    {
+      "issue_id": "duplicate_rows_dataset_001",
+      "check_id": "duplicate_rows",
+      "title": "Duplicate rows detected",
+      "severity": "critical",
+      "risk_level": "high",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": null,
+        "column_role": null
+      },
+      "evidence": {
+        "metric": "duplicate_row_percent",
+        "observed_value": 0.1,
+        "threshold": 0.1,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "duplicate_row_count": 1,
+          "duplicate_row_percent": 0.1,
+          "total_rows": 10
+        }
+      },
+      "ml_impact": "Duplicate rows can distort validation estimates and make models overfit repeated records.",
+      "recommendation": "Investigate duplicate records and decide whether they represent valid repeated observations before training.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "duplicate_warning_threshold": 0.1
+        }
+      }
+    },
+    {
+      "issue_id": "constant_column_constant_feature_001",
+      "check_id": "constant_columns",
+      "title": "Constant feature column detected",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "constant_feature",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "unique_count",
+        "observed_value": 1,
+        "threshold": 1,
+        "comparison": "observed_value == threshold",
+        "details": {
+          "unique_count": 1,
+          "non_null_count": 10
+        }
+      },
+      "ml_impact": "Constant features do not provide useful model signal.",
+      "recommendation": "Remove or ignore constant feature columns during modeling.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "unique_count_threshold": 1
+        }
+      }
+    },
+    {
+      "issue_id": "high_cardinality_customer_id_001",
+      "check_id": "high_cardinality",
+      "title": "High-cardinality categorical column detected",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "customer_id",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "unique_percent",
+        "observed_value": 0.9,
+        "threshold": 0.5,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "unique_count": 9,
+          "total_rows": 10,
+          "unique_percent": 0.9
+        }
+      },
+      "ml_impact": "High-cardinality categorical values can cause sparse features, leakage risk, or unstable encodings.",
+      "recommendation": "Confirm whether this column is an identifier or a usable model feature before training.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "high_cardinality_threshold": 0.5,
+          "id_unique_ratio_threshold": 0.95
+        }
+      }
+    },
+    {
+      "issue_id": "high_cardinality_city_001",
+      "check_id": "high_cardinality",
+      "title": "High-cardinality categorical column detected",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "city",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "unique_percent",
+        "observed_value": 0.5,
+        "threshold": 0.5,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "unique_count": 5,
+          "total_rows": 10,
+          "unique_percent": 0.5
+        }
+      },
+      "ml_impact": "High-cardinality categorical values can cause sparse features, leakage risk, or unstable encodings.",
+      "recommendation": "Confirm whether this column is an identifier or a usable model feature before training.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "high_cardinality_threshold": 0.5,
+          "id_unique_ratio_threshold": 0.95
+        }
+      }
+    },
+    {
+      "issue_id": "high_cardinality_signup_date_001",
+      "check_id": "high_cardinality",
+      "title": "High-cardinality categorical column detected",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "signup_date",
+        "column_role": "datetime_candidate"
+      },
+      "evidence": {
+        "metric": "unique_percent",
+        "observed_value": 0.8,
+        "threshold": 0.5,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "unique_count": 8,
+          "total_rows": 10,
+          "unique_percent": 0.8
+        }
+      },
+      "ml_impact": "High-cardinality categorical values can cause sparse features, leakage risk, or unstable encodings.",
+      "recommendation": "Confirm whether this column is an identifier or a usable model feature before training.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "high_cardinality_threshold": 0.5,
+          "id_unique_ratio_threshold": 0.95
+        }
+      }
+    },
+    {
+      "issue_id": "class_imbalance_label_001",
+      "check_id": "class_imbalance",
+      "title": "Target class imbalance detected",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "label",
+        "column_role": "target"
+      },
+      "evidence": {
+        "metric": "dominant_class_ratio",
+        "observed_value": 0.9,
+        "threshold": 0.8,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "class_distribution": {
+            "1": 0.9,
+            "0": 0.1
+          },
+          "dominant_class_ratio": 0.9,
+          "total_rows": 10
+        }
+      },
+      "ml_impact": "Imbalanced classes can produce misleading accuracy and weak minority-class performance.",
+      "recommendation": "Use stratified validation and consider class-aware metrics, sampling, or weighting in the training pipeline.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "imbalance_warning_threshold": 0.8
+        }
+      }
+    },
+    {
+      "issue_id": "id_like_customer_id_001",
+      "check_id": "id_like_columns",
+      "title": "Suspicious ID-like column detected",
+      "severity": "info",
+      "risk_level": "low",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "customer_id",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "unique_percent",
+        "observed_value": 0.9,
+        "threshold": 0.95,
+        "comparison": "observed_value >= threshold or name contains ID signal",
+        "details": {
+          "unique_count": 9,
+          "total_rows": 10,
+          "name_signal": true,
+          "unique_signal": false
+        }
+      },
+      "ml_impact": "ID-like columns may create leakage or brittle memorization if they are not available or meaningful at prediction time.",
+      "recommendation": "Confirm whether this column is an ID and whether it is available at prediction time.",
+      "requires_human_review": true,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "id_unique_ratio_threshold": 0.95,
+          "name_signals": [
+            "id",
+            "uuid",
+            "identifier",
+            "user_id",
+            "customer_id",
+            "transaction_id"
+          ]
+        }
+      }
+    },
+    {
+      "issue_id": "outlier_risk_age_001",
+      "check_id": "outlier_risk",
+      "title": "Numeric outlier risk detected",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "age",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "outlier_percent",
+        "observed_value": 0.1,
+        "threshold": 0.05,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "lower_bound": 14.75,
+          "upper_bound": 62.75,
+          "outlier_count": 1,
+          "outlier_percent": 0.1
+        }
+      },
+      "ml_impact": "Outliers can dominate model training or distort scaling if not handled consistently.",
+      "recommendation": "Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "iqr_multiplier": 1.5,
+          "warning_threshold": 0.05
+        }
+      }
+    },
+    {
+      "issue_id": "outlier_risk_income_text_001",
+      "check_id": "outlier_risk",
+      "title": "Numeric outlier risk detected",
+      "severity": "warning",
+      "risk_level": "medium",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "income_text",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "outlier_percent",
+        "observed_value": 0.1,
+        "threshold": 0.05,
+        "comparison": "observed_value >= threshold",
+        "details": {
+          "lower_bound": 9250.0,
+          "upper_bound": 127250.0,
+          "outlier_count": 1,
+          "outlier_percent": 0.1
+        }
+      },
+      "ml_impact": "Outliers can dominate model training or distort scaling if not handled consistently.",
+      "recommendation": "Inspect outliers before training and consider robust preprocessing where appropriate; do not blindly remove them.",
+      "requires_human_review": false,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "iqr_multiplier": 1.5,
+          "warning_threshold": 0.05
+        }
+      }
+    },
+    {
+      "issue_id": "target_leakage_candidate_customer_id_category_target_mapping_001",
+      "check_id": "target_leakage_candidate",
+      "title": "Target leakage candidate detected",
+      "severity": "critical",
+      "risk_level": "high",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "customer_id",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "leakage_candidate_signal",
+        "observed_value": 1.0,
+        "threshold": 0.98,
+        "comparison": "observed_value indicates possible leakage",
+        "details": {
+          "signal_type": "category_target_mapping",
+          "observed_metric": 1.0,
+          "threshold": 0.98,
+          "column": "customer_id",
+          "target_column": "label"
+        }
+      },
+      "ml_impact": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.",
+      "recommendation": "Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.",
+      "requires_human_review": true,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "target_correlation_threshold": 0.95,
+          "dominant_target_ratio_threshold": 0.98
+        }
+      }
+    },
+    {
+      "issue_id": "target_leakage_candidate_income_text_target_correlation_001",
+      "check_id": "target_leakage_candidate",
+      "title": "Target leakage candidate detected",
+      "severity": "critical",
+      "risk_level": "high",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "income_text",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "leakage_candidate_signal",
+        "observed_value": 0.9966397570774854,
+        "threshold": 0.95,
+        "comparison": "observed_value indicates possible leakage",
+        "details": {
+          "signal_type": "target_correlation",
+          "observed_metric": 0.9966397570774854,
+          "threshold": 0.95,
+          "column": "income_text",
+          "target_column": "label"
+        }
+      },
+      "ml_impact": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.",
+      "recommendation": "Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.",
+      "requires_human_review": true,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "target_correlation_threshold": 0.95,
+          "dominant_target_ratio_threshold": 0.98
+        }
+      }
+    },
+    {
+      "issue_id": "target_leakage_candidate_signup_date_category_target_mapping_001",
+      "check_id": "target_leakage_candidate",
+      "title": "Target leakage candidate detected",
+      "severity": "critical",
+      "risk_level": "high",
+      "status": "failed",
+      "scope": {
+        "dataset": "train",
+        "column": "signup_date",
+        "column_role": "feature"
+      },
+      "evidence": {
+        "metric": "leakage_candidate_signal",
+        "observed_value": 1.0,
+        "threshold": 0.98,
+        "comparison": "observed_value indicates possible leakage",
+        "details": {
+          "signal_type": "category_target_mapping",
+          "observed_metric": 1.0,
+          "threshold": 0.98,
+          "column": "signup_date",
+          "target_column": "label"
+        }
+      },
+      "ml_impact": "A target leakage candidate can inflate training and validation metrics if the feature is derived from the target event.",
+      "recommendation": "Confirm whether this feature is available at prediction time; remove it from training if it is derived from or created after the target event.",
+      "requires_human_review": true,
+      "reproducibility": {
+        "check_version": "0.1.0",
+        "parameters": {
+          "target_correlation_threshold": 0.95,
+          "dominant_target_ratio_threshold": 0.98
+        }
+      }
+    }
+  ],
+  "score": {
+    "score": 0,
+    "max_score": 100,
+    "score_band": "high_risk",
+    "deductions": [
+      {
+        "issue_id": "missing_values_age_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "duplicate_rows_dataset_001",
+        "severity": "critical",
+        "deduction": 20,
+        "reason": "critical issue"
+      },
+      {
+        "issue_id": "constant_column_constant_feature_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "high_cardinality_customer_id_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "high_cardinality_city_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "high_cardinality_signup_date_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "class_imbalance_label_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "id_like_customer_id_001",
+        "severity": "info",
+        "deduction": 4,
+        "reason": "info issue; requires human review"
+      },
+      {
+        "issue_id": "outlier_risk_age_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "outlier_risk_income_text_001",
+        "severity": "warning",
+        "deduction": 8,
+        "reason": "warning issue"
+      },
+      {
+        "issue_id": "target_leakage_candidate_customer_id_category_target_mapping_001",
+        "severity": "critical",
+        "deduction": 22,
+        "reason": "critical issue; requires human review"
+      },
+      {
+        "issue_id": "target_leakage_candidate_income_text_target_correlation_001",
+        "severity": "critical",
+        "deduction": 22,
+        "reason": "critical issue; requires human review"
+      },
+      {
+        "issue_id": "target_leakage_candidate_signup_date_category_target_mapping_001",
+        "severity": "critical",
+        "deduction": 22,
+        "reason": "critical issue; requires human review"
+      }
+    ]
+  },
+  "metadata": {
+    "package_version": "0.1.0",
+    "engine_version": "0.1.0",
+    "deterministic": true,
+    "ai_generated": false
+  }
+}
