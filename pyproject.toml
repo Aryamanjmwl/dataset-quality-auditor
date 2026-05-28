@@ -61,7 +61,6 @@ exclude = [
     ".ruff_cache",
     "__pycache__",
     "dqa",
-    "quick_audit.py",
 ]
 
 [tool.ruff.lint]
