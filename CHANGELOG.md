@@ -2,20 +2,26 @@
 
 All notable changes to Dataset Quality Auditor will be documented here.
 
-## Unreleased
+## [0.1.0] - 2026-05-28
 
 ### Added
 
-- Deterministic audit engine.
-- Advanced ML-readiness checks.
-- Train/test audit mode.
-- JSON, Markdown, and HTML reports.
-- YAML data contracts.
-- Validation mode.
-- Guarded mock AI review.
-- Graph-style AI review workflow.
-- Example datasets and sample outputs.
+- Deterministic dataset audit engine
+- Readiness scoring
+- Structured audit issue schema
+- Advanced ML-readiness checks
+- Train/test audit mode
+- JSON, Markdown, and HTML reports
+- YAML data contract generation
+- Contract validation mode
+- Guarded mock AI review
+- Graph-style AI review workflow
+- Public example datasets and curated sample outputs
+- GitHub Actions CI
+- Documentation for quickstart, CLI usage, architecture, reports, contracts, AI review, and safety
 
-## 0.1.0 - Planned
+### Notes
 
-- Public MVP release packaging and documentation polish.
+- AI review is currently mock/provider-agnostic only.
+- Real OpenAI/Ollama providers are future work.
+- The deterministic audit engine remains the source of truth.
