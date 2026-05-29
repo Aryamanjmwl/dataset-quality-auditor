@@ -23,7 +23,7 @@ review.
 ## Key Features
 
 - CLI-first workflow with Typer and Rich.
-- Deterministic audit engine for tabular CSV datasets.
+- Deterministic audit engine for local tabular CSV datasets.
 - Single-dataset and train/test audit modes.
 - Checks for missingness, duplicates, constants, cardinality, imbalance,
   ID-like columns, datatype risks, outliers, correlation, leakage candidates,
@@ -54,6 +54,9 @@ python quick_audit.py examples/datasets/classification_dirty.csv label
 
 Generated runtime outputs are written to `reports/` and `contracts/`. Curated
 sample artifacts are committed under `examples/`.
+
+Current input support is local CSV files. Other file formats and remote data
+sources are not part of this release.
 
 ## CLI Usage Examples
 
