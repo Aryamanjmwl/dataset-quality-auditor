@@ -53,6 +53,37 @@ def test_numeric_mean_shift_creates_drift_issue() -> None:
     assert "mean_shift" in issue.evidence.details
 
 
+def test_config_can_lower_numeric_drift_threshold() -> None:
+    train = pd.DataFrame({"x": [0, 1, 2, 3, 4], "label": [0, 0, 1, 1, 1]})
+    test = pd.DataFrame(
+        {"x": [0.6, 1.6, 2.6, 3.6, 4.6], "label": [0, 0, 1, 1, 1]}
+    )
+    default_context = create_audit_context("train.csv", target_column="label")
+    configured_context = create_audit_context(
+        "train.csv",
+        target_column="label",
+        config={"numeric_drift_mean_shift_std_ratio": 0.5},
+    )
+
+    default_issues = check_train_test_drift(
+        train,
+        test,
+        profile_dataframe(train, "label"),
+        profile_dataframe(test, "label"),
+        default_context,
+    )
+    configured_issues = check_train_test_drift(
+        train,
+        test,
+        profile_dataframe(train, "label"),
+        profile_dataframe(test, "label"),
+        configured_context,
+    )
+
+    assert not any(issue.check_id == "numeric_drift" for issue in default_issues)
+    assert any(issue.check_id == "numeric_drift" for issue in configured_issues)
+
+
 def test_unseen_categorical_category_creates_warning() -> None:
     train = pd.DataFrame({"city": ["a", "b", "a"], "label": [0, 1, 0]})
     test = pd.DataFrame({"city": ["a", "c"], "label": [0, 1]})
@@ -158,3 +189,28 @@ def test_target_distribution_shift_creates_warning_issue() -> None:
     assert issue.evidence.metric == "max_target_distribution_shift"
     assert issue.evidence.details["train_distribution"] == {"0": 0.8, "1": 0.2}
     assert issue.evidence.details["test_distribution"] == {"0": 0.2, "1": 0.8}
+
+
+def test_config_can_raise_target_drift_threshold_and_suppress_issue() -> None:
+    train = pd.DataFrame({"x": [1, 2, 3, 4, 5], "label": [0, 0, 0, 0, 1]})
+    test = pd.DataFrame({"x": [1, 2, 3, 4, 5], "label": [0, 1, 1, 1, 1]})
+    context = create_audit_context(
+        "train.csv",
+        target_column="label",
+        config={
+            "target_distribution_drift_warning_shift": 0.80,
+            "target_distribution_drift_critical_shift": 0.90,
+        },
+    )
+
+    issues = check_train_test_drift(
+        train,
+        test,
+        profile_dataframe(train, "label"),
+        profile_dataframe(test, "label"),
+        context,
+    )
+
+    assert not any(
+        issue.check_id == "target_distribution_drift" for issue in issues
+    )
