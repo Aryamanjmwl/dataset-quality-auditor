@@ -45,5 +45,5 @@ tag.
 ## Release Notes
 
 - [ ] Changelog entry is updated.
-- [ ] Release notes are prepared.
+- [ ] `docs/release/v0.1.0-release-notes.md` is prepared.
 - [ ] The release tag matches the package version.
