@@ -173,6 +173,17 @@ def audit(
             help="Directory where audit.json and optional reports are written.",
         ),
     ] = "reports",
+    config: Annotated[
+        Path | None,
+        typer.Option(
+            "--config",
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Optional YAML file with supported audit threshold overrides.",
+        ),
+    ] = None,
     format: Annotated[
         str,
         typer.Option(
@@ -190,6 +201,7 @@ def audit(
             target_column=target,
             test_dataset_path=_display_path(test_dataset) if test_dataset else None,
             output_dir=output_dir,
+            config_path=_display_path(config) if config else None,
         )
     except (FileNotFoundError, ValueError) as exc:
         raise typer.BadParameter(str(exc)) from exc

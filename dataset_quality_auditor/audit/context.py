@@ -14,6 +14,11 @@ DEFAULT_CONFIG: dict[str, float] = {
     "high_cardinality_threshold": 0.50,
     "imbalance_warning_threshold": 0.80,
     "id_unique_ratio_threshold": 0.95,
+    "numeric_drift_mean_shift_std_ratio": 1.0,
+    "categorical_drift_dominant_category_shift": 0.30,
+    "categorical_drift_missing_category_ratio": 0.50,
+    "target_distribution_drift_warning_shift": 0.25,
+    "target_distribution_drift_critical_shift": 0.50,
 }
 
 

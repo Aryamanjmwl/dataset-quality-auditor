@@ -15,11 +15,6 @@ from dataset_quality_auditor.audit.severity import (
     WARNING,
 )
 
-CATEGORY_SHIFT_THRESHOLD = 0.30
-MISSING_CATEGORY_RATIO_THRESHOLD = 0.50
-TARGET_SHIFT_WARNING_THRESHOLD = 0.25
-TARGET_SHIFT_CRITICAL_THRESHOLD = 0.50
-
 
 def check_numeric_drift(
     train_df: pd.DataFrame,
@@ -45,10 +40,12 @@ def check_numeric_drift(
         test_mean = float(test_df[column].mean())
         test_std = float(test_df[column].std())
         mean_shift = abs(test_mean - train_mean) / train_std
-        if mean_shift >= 1.0:
-            severity, risk, threshold = WARNING, MEDIUM, 1.0
-        elif mean_shift >= 0.5:
-            severity, risk, threshold = INFO, LOW, 0.5
+        warning_threshold = context.config["numeric_drift_mean_shift_std_ratio"]
+        info_threshold = warning_threshold / 2
+        if mean_shift >= warning_threshold:
+            severity, risk, threshold = WARNING, MEDIUM, warning_threshold
+        elif mean_shift >= info_threshold:
+            severity, risk, threshold = INFO, LOW, info_threshold
         else:
             continue
         issues.append(
@@ -117,6 +114,10 @@ def check_categorical_drift(
         test_distribution = _value_distribution(test_df[column])
         train_top = _dominant_category(train_distribution)
         test_top = _dominant_category(test_distribution)
+        dominant_threshold = context.config[
+            "categorical_drift_dominant_category_shift"
+        ]
+        missing_threshold = context.config["categorical_drift_missing_category_ratio"]
         dominant_shift = 0.0
         dominant_changed = False
         if train_top is not None and test_top is not None:
@@ -130,12 +131,12 @@ def check_categorical_drift(
             observed_value = len(unseen)
         elif missing and train_values:
             missing_ratio = len(missing) / len(train_values)
-            if missing_ratio < MISSING_CATEGORY_RATIO_THRESHOLD:
+            if missing_ratio < missing_threshold:
                 continue
             severity, risk = INFO, LOW
             metric = "missing_category_ratio"
             observed_value = float(missing_ratio)
-        elif dominant_changed and dominant_shift >= CATEGORY_SHIFT_THRESHOLD:
+        elif dominant_changed and dominant_shift >= dominant_threshold:
             severity, risk = WARNING, MEDIUM
             metric = "dominant_category_shift"
             observed_value = float(dominant_shift)
@@ -157,7 +158,10 @@ def check_categorical_drift(
                 evidence=Evidence(
                     metric=metric,
                     observed_value=observed_value,
-                    threshold=_categorical_drift_threshold(metric),
+                    threshold=_categorical_drift_threshold(
+                        metric,
+                        context,
+                    ),
                     comparison=_categorical_drift_comparison(metric),
                     details={
                         "unseen_categories": unseen[:10],
@@ -181,7 +185,10 @@ def check_categorical_drift(
                     "represent expected serving data."
                 ),
                 requires_human_review=False,
-                reproducibility=reproducibility(context, {}),
+                reproducibility=reproducibility(
+                    context,
+                    {"threshold": _categorical_drift_threshold(metric, context)},
+                ),
             )
         )
     return issues
@@ -215,10 +222,12 @@ def check_target_distribution_drift(
         for label in labels
     }
     max_shift = max(shifts.values(), default=0.0)
-    if max_shift >= TARGET_SHIFT_CRITICAL_THRESHOLD:
-        severity, risk, threshold = CRITICAL, HIGH, TARGET_SHIFT_CRITICAL_THRESHOLD
-    elif max_shift >= TARGET_SHIFT_WARNING_THRESHOLD:
-        severity, risk, threshold = WARNING, MEDIUM, TARGET_SHIFT_WARNING_THRESHOLD
+    critical_threshold = context.config["target_distribution_drift_critical_shift"]
+    warning_threshold = context.config["target_distribution_drift_warning_shift"]
+    if max_shift >= critical_threshold:
+        severity, risk, threshold = CRITICAL, HIGH, critical_threshold
+    elif max_shift >= warning_threshold:
+        severity, risk, threshold = WARNING, MEDIUM, warning_threshold
     else:
         return []
 
@@ -305,11 +314,11 @@ def _value_distribution(series: pd.Series) -> dict[str, float]:
     return {str(key): float(value) for key, value in counts.sort_index().items()}
 
 
-def _categorical_drift_threshold(metric: str) -> float | int:
+def _categorical_drift_threshold(metric: str, context: AuditContext) -> float | int:
     if metric == "dominant_category_shift":
-        return CATEGORY_SHIFT_THRESHOLD
+        return context.config["categorical_drift_dominant_category_shift"]
     if metric == "missing_category_ratio":
-        return MISSING_CATEGORY_RATIO_THRESHOLD
+        return context.config["categorical_drift_missing_category_ratio"]
     return 0
 
 

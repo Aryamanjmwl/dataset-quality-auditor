@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from dataset_quality_auditor.audit.config import load_audit_config
 from dataset_quality_auditor.audit.context import create_audit_context
 from dataset_quality_auditor.audit.profiler import profile_dataframe
 from dataset_quality_auditor.audit.registry import (
@@ -23,6 +24,7 @@ def run_audit(
     target_column: str | None = None,
     test_dataset_path: str | None = None,
     output_dir: str = "reports",
+    config_path: str | None = None,
 ) -> dict[str, object]:
     """Run a deterministic audit for a CSV dataset and write audit.json."""
     dataset = Path(dataset_path)
@@ -51,6 +53,7 @@ def run_audit(
         target_column=target_column,
         test_dataset_path=test_dataset.as_posix() if test_dataset else None,
         output_dir=output_dir,
+        config=load_audit_config(config_path),
     )
     train_profile = profile_dataframe(
         train_df,

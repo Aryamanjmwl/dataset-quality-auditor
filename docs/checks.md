@@ -67,6 +67,24 @@ Train/test mode can detect missing or extra columns, dtype/type-kind
 mismatches, numeric drift, categorical drift, and target distribution drift.
 These are deterministic readiness signals, not statistical significance tests.
 
+Optional threshold overrides can be passed to `dqa audit` with `--config`:
+
+```yaml
+thresholds:
+  numeric_drift:
+    mean_shift_std_ratio: 1.0
+  categorical_drift:
+    dominant_category_shift: 0.30
+    missing_category_ratio: 0.50
+  target_distribution_drift:
+    warning_shift: 0.25
+    critical_shift: 0.50
+```
+
+```bash
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --config audit-config.yaml
+```
+
 ### Schema Mismatch
 
 Detects missing test feature columns, extra test columns, dtype mismatches, and
