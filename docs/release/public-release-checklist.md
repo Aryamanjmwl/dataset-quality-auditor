@@ -8,6 +8,8 @@ tag.
 - [ ] Run `python -m pip install -e ".[dev]"`.
 - [ ] Run `ruff check .`.
 - [ ] Run `pytest`.
+- [ ] Run `python -m build`.
+- [ ] Run `python -m twine check dist/*`.
 - [ ] Run `git diff --check`.
 - [ ] Confirm GitHub Actions passes on Python 3.10, 3.11, and 3.12.
 
