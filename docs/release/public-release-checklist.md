@@ -8,6 +8,7 @@ tag.
 - [ ] Run `python -m pip install -e ".[dev]"`.
 - [ ] Run `ruff check .`.
 - [ ] Run `pytest`.
+- [ ] Run `pytest --cov=dataset_quality_auditor --cov-report=term-missing`.
 - [ ] Run `python -m build`.
 - [ ] Run `python -m twine check dist/*`.
 - [ ] Run `python -m pip_audit` or review the dependency audit workflow result.
