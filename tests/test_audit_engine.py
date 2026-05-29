@@ -24,3 +24,42 @@ def test_run_audit_writes_audit_json(tmp_path) -> None:
     assert written["metadata"]["ai_generated"] is False
     assert written["score"]["score"] <= 100
     assert written["issues"]
+
+
+def test_run_audit_train_test_json_includes_drift_findings(tmp_path) -> None:
+    train = tmp_path / "train.csv"
+    test = tmp_path / "test.csv"
+    train.write_text(
+        "feature,segment,label\n"
+        "1,a,0\n"
+        "2,a,0\n"
+        "3,a,0\n"
+        "4,b,0\n"
+        "5,b,1\n",
+        encoding="utf-8",
+    )
+    test.write_text(
+        "feature,segment,label\n"
+        "20,a,0\n"
+        "21,c,1\n"
+        "22,c,1\n"
+        "23,c,1\n"
+        "24,c,1\n",
+        encoding="utf-8",
+    )
+
+    run_audit(
+        str(train),
+        target_column="label",
+        test_dataset_path=str(test),
+        output_dir=str(tmp_path),
+    )
+    audit_json = tmp_path / "audit.json"
+    written = json.loads(audit_json.read_text(encoding="utf-8"))
+    check_ids = {issue["check_id"] for issue in written["issues"]}
+
+    assert written["mode"] == "train_test"
+    assert written["test_dataset_path"] == test.as_posix()
+    assert "numeric_drift" in check_ids
+    assert "categorical_drift" in check_ids
+    assert "target_distribution_drift" in check_ids

@@ -59,10 +59,11 @@ mapping with the target. These issues require human review.
 
 ### Schema Mismatch
 
-Detects missing test feature columns, extra test columns, and dtype mismatches.
-Missing test feature columns are critical, extra test columns are info, and dtype
-mismatches are warnings. Evidence includes train columns, test columns, missing
-columns, extra columns, and dtype mismatches.
+Detects missing test feature columns, extra test columns, dtype mismatches, and
+inferred type-kind mismatches. Missing test feature columns are critical, extra
+test columns are info, and dtype/type-kind mismatches are warnings. Evidence
+includes train columns, test columns, missing columns, extra columns, dtype
+mismatches, and type-kind mismatches.
 
 ### Train/Test Overlap
 
@@ -78,9 +79,18 @@ info; at or above 1.0 is warning. This is not a statistical significance claim.
 
 ### Categorical Drift
 
-Compares observed category sets. Unseen test categories are warnings. Large
-missing category shifts are info for now. Evidence includes unseen categories,
-missing categories, and unique counts.
+Compares observed category sets and dominant category frequencies. Unseen test
+categories are warnings. Large missing category shifts are info for now.
+Strong dominant-category changes are warnings. Evidence includes capped examples
+of unseen/missing categories, unique counts, top categories, top frequencies,
+and the deterministic shift value.
+
+### Target Distribution Drift
+
+When the target column exists in both train and test, compares normalized target
+value distributions. A maximum class proportion shift at or above 0.25 is a
+warning; at or above 0.50 is critical. This is a deterministic readiness signal,
+not a statistical significance test.
 
 ## Limitations
 
