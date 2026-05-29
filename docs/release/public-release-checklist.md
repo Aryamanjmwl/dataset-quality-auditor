@@ -12,6 +12,8 @@ tag.
 - [ ] Run `python -m twine check dist/*`.
 - [ ] Run `git diff --check`.
 - [ ] Confirm GitHub Actions passes on Python 3.10, 3.11, and 3.12.
+- [ ] Confirm generated artifacts such as `dist/`, `build/`, `*.egg-info/`,
+      `reports/`, and test caches are not staged.
 
 ## Documentation
 
