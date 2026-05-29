@@ -57,6 +57,16 @@ mapping with the target. These issues require human review.
 
 ## Train/Test Checks
 
+Run train/test checks with:
+
+```bash
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
+```
+
+Train/test mode can detect missing or extra columns, dtype/type-kind
+mismatches, numeric drift, categorical drift, and target distribution drift.
+These are deterministic readiness signals, not statistical significance tests.
+
 ### Schema Mismatch
 
 Detects missing test feature columns, extra test columns, dtype mismatches, and
