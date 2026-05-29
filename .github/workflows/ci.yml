@@ -27,7 +27,7 @@ jobs:
         run: ruff check .
 
       - name: Test
-        run: python -m pytest
+        run: python -m pytest --cov=dataset_quality_auditor --cov-report=term-missing --cov-report=xml
 
       - name: Check package build
         run: |

@@ -41,6 +41,7 @@ Issues = "https://github.com/Aryamanjmwl/dataset-quality-auditor/issues"
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
+    "pytest-cov>=5.0",
     "ruff>=0.8",
 ]
 
@@ -56,6 +57,17 @@ dataset_quality_auditor = ["reports/templates/*.j2"]
 [tool.pytest.ini_options]
 addopts = "-ra --basetemp=.pytest-run -p no:cacheprovider"
 testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["dataset_quality_auditor"]
+omit = [
+    "tests/*",
+    ".pytest-run/*",
+    ".pytest-tmp/*",
+]
+
+[tool.coverage.report]
+show_missing = true
 
 [tool.ruff]
 line-length = 88
