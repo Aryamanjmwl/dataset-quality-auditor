@@ -14,6 +14,8 @@ tag.
 - [ ] Run `git diff --check`.
 - [ ] Confirm GitHub Actions passes on Python 3.10, 3.11, and 3.12.
   Dependency audit is initially informational and may be non-blocking.
+- [ ] Confirm generated artifacts such as `dist/`, `build/`, `*.egg-info/`,
+      `reports/`, and test caches are not staged.
 
 ## Documentation
 

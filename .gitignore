@@ -53,6 +53,7 @@ coverage.xml
 .pytest-tmp/
 .pytest-run/
 .pytest-ai-run/
+.mypy_cache/
 cover/
 # Generated reports
 /reports/
