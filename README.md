@@ -37,39 +37,44 @@ review.
 ## Quickstart
 
 ```bash
+git clone https://github.com/Aryamanjmwl/dataset-quality-auditor.git
+cd dataset-quality-auditor
+
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
 pip install -e ".[dev]"
+python -m pytest
 
 dqa audit examples/datasets/classification_dirty.csv --target label --format all
-dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
-dqa contract examples/datasets/classification_dirty.csv --target label
-dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
-dqa review reports/audit.json --provider mock --workflow graph
 ```
 
 Python example:
 
 ```bash
-python quick_audit.py examples/datasets/classification_dirty.csv label
+python quick_audit.py examples/datasets/classification_dirty.csv label --output-dir reports/quick-audit
 ```
 
-Generated runtime outputs are written to `reports/` and `contracts/`. Curated
-sample artifacts are committed under `examples/`.
+Generated runtime outputs are written to folders such as `reports/` and
+`contracts/`. These folders are ignored by Git and should not be committed.
+Curated sample artifacts are committed under `examples/`.
 
-Current input support is local CSV files. Other file formats and remote data
-sources are not part of this release.
+Current scope: local CSV files, deterministic checks, and an early-stage public
+release. Other file formats and remote data sources are not part of this
+release.
 
-## CLI Usage Examples
+## Common Commands
 
-```bash
-dqa version
-dqa audit examples/datasets/classification_dirty.csv --target label --format all
-dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
-dqa report reports/audit.json --format html
-dqa contract examples/datasets/classification_dirty.csv --target label
-dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
-dqa review reports/audit.json --provider mock
-dqa review reports/audit.json --provider mock --workflow graph
-```
+| Task | Command |
+|---|---|
+| Show CLI help | `dqa --help` |
+| Show version | `dqa version` |
+| Audit one CSV | `dqa audit examples/datasets/classification_dirty.csv --target label --format all` |
+| Audit train/test CSVs | `dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all` |
+| Generate an HTML report | `dqa report reports/audit.json --format html` |
+| Generate a YAML contract | `dqa contract examples/datasets/classification_dirty.csv --target label` |
+| Validate against a contract | `dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml` |
+| Run mock AI review | `dqa review reports/audit.json --provider mock --workflow graph` |
 
 ## Example Outputs
 
