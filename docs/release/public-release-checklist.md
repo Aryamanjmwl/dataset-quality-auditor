@@ -10,8 +10,10 @@ tag.
 - [ ] Run `pytest`.
 - [ ] Run `python -m build`.
 - [ ] Run `python -m twine check dist/*`.
+- [ ] Run `python -m pip_audit` or review the dependency audit workflow result.
 - [ ] Run `git diff --check`.
 - [ ] Confirm GitHub Actions passes on Python 3.10, 3.11, and 3.12.
+  Dependency audit is initially informational and may be non-blocking.
 
 ## Documentation
 
