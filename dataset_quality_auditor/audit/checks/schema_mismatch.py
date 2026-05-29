@@ -38,12 +38,21 @@ def check_schema_mismatch(
         for column in shared_columns
         if str(train_df[column].dtype) != str(test_df[column].dtype)
     }
+    type_kind_mismatches = {
+        column: {
+            "train_kind": _column_kind(train_profile, column),
+            "test_kind": _column_kind(test_profile, column),
+        }
+        for column in shared_columns
+        if _column_kind(train_profile, column) != _column_kind(test_profile, column)
+    }
     details = {
         "train_columns": train_columns,
         "test_columns": test_columns,
         "missing_in_test": missing_in_test,
         "extra_in_test": extra_in_test,
         "dtype_mismatches": dtype_mismatches,
+        "type_kind_mismatches": type_kind_mismatches,
     }
 
     for column in missing_in_test:
@@ -136,4 +145,52 @@ def check_schema_mismatch(
                 reproducibility=reproducibility(context, {}),
             )
         )
+    for column, mismatch in type_kind_mismatches.items():
+        issues.append(
+            Issue(
+                issue_id=issue_id("schema_type_kind_mismatch", column),
+                check_id="schema_mismatch",
+                title="Train/test inferred type kind mismatch detected",
+                severity=WARNING,
+                risk_level=MEDIUM,
+                status="failed",
+                scope={
+                    "dataset": "train_test",
+                    "column": column,
+                    "column_role": "unknown",
+                },
+                evidence=Evidence(
+                    metric="type_kind_mismatch",
+                    observed_value=True,
+                    threshold=True,
+                    comparison="observed_value == threshold",
+                    details={"column": column, **mismatch, **details},
+                ),
+                ml_impact=(
+                    "Inferred type-kind mismatches can produce inconsistent "
+                    "preprocessing between train and test data."
+                ),
+                recommendation=(
+                    "Review feature typing and apply explicit schema checks."
+                ),
+                requires_human_review=False,
+                reproducibility=reproducibility(context, {}),
+            )
+        )
     return issues
+
+
+def _column_kind(profile: dict[str, object], column: str) -> str:
+    columns = profile.get("columns", {})
+    if not isinstance(columns, dict):
+        return "unknown"
+    metadata = columns.get(column, {})
+    if not isinstance(metadata, dict):
+        return "unknown"
+    if metadata.get("is_numeric") is True:
+        return "numeric"
+    if metadata.get("inferred_role") == "datetime_candidate":
+        return "datetime_candidate"
+    if metadata.get("is_categorical") is True:
+        return "categorical"
+    return "other"
