@@ -1,0 +1,17 @@
+# Example deterministic audit threshold configuration.
+# These defaults match the built-in train/test drift behavior.
+# They are readiness thresholds, not statistical significance tests.
+thresholds:
+  numeric_drift:
+    # Flag numeric mean shift when the shift reaches this many train standard deviations.
+    mean_shift_std_ratio: 1.0
+  categorical_drift:
+    # Flag dominant category changes when the frequency shift reaches this ratio.
+    dominant_category_shift: 0.30
+    # Flag missing train categories in test when this share of train categories is absent.
+    missing_category_ratio: 0.50
+  target_distribution_drift:
+    # Flag target distribution changes at or above this warning shift.
+    warning_shift: 0.25
+    # Flag target distribution changes at or above this critical shift.
+    critical_shift: 0.50
