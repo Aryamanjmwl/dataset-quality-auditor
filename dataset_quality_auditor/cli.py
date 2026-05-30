@@ -12,7 +12,10 @@ from rich.table import Table
 from dataset_quality_auditor import __version__
 from dataset_quality_auditor.ai import generate_ai_review
 from dataset_quality_auditor.audit.engine import run_audit
-from dataset_quality_auditor.audit.summary import summarize_audit_result
+from dataset_quality_auditor.audit.summary import (
+    evaluate_audit_gate,
+    summarize_audit_result,
+)
 from dataset_quality_auditor.contracts import (
     generate_contract,
     save_contract,
@@ -337,6 +340,113 @@ def summary(
     )
     console.print("[bold]Dataset Quality Auditor Summary[/bold]\n")
     console.print(table)
+
+
+@app.command()
+def gate(
+    audit_json: Annotated[
+        Path,
+        typer.Argument(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Path to audit.json from a deterministic audit run.",
+        ),
+    ],
+    min_score: Annotated[
+        float,
+        typer.Option(
+            "--min-score",
+            help="Minimum readiness score required to pass.",
+        ),
+    ] = 0,
+    max_critical: Annotated[
+        int | None,
+        typer.Option(
+            "--max-critical",
+            help="Maximum allowed critical issues. Omit for no limit.",
+        ),
+    ] = None,
+    max_high: Annotated[
+        int | None,
+        typer.Option(
+            "--max-high",
+            help="Maximum allowed high-risk issues. Omit for no limit.",
+        ),
+    ] = None,
+    max_medium: Annotated[
+        int | None,
+        typer.Option(
+            "--max-medium",
+            help="Maximum allowed medium-risk issues. Omit for no limit.",
+        ),
+    ] = None,
+    max_human_review: Annotated[
+        int | None,
+        typer.Option(
+            "--max-human-review",
+            help="Maximum allowed issues requiring human review. Omit for no limit.",
+        ),
+    ] = None,
+    format: Annotated[
+        str,
+        typer.Option(
+            "--format",
+            "-f",
+            help="Gate output format: text or json.",
+        ),
+    ] = "text",
+) -> None:
+    """Evaluate deterministic CI/CD gate rules from existing audit JSON."""
+    normalized = _validate_summary_format(format)
+    try:
+        audit_result = load_audit_json(audit_json)
+        result = evaluate_audit_gate(
+            audit_result,
+            min_score=min_score,
+            max_critical=max_critical,
+            max_high=max_high,
+            max_medium=max_medium,
+            max_human_review=max_human_review,
+        )
+    except (FileNotFoundError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    if normalized == "json":
+        console.print(json.dumps(result, indent=2, sort_keys=True))
+    else:
+        summary_result = result["summary"]
+        assert isinstance(summary_result, dict)
+        risk_level_counts = summary_result["risk_level_counts"]
+        severity_counts = summary_result["severity_counts"]
+        assert isinstance(risk_level_counts, dict)
+        assert isinstance(severity_counts, dict)
+
+        table = Table.grid(padding=(0, 1))
+        table.add_column(style="bold")
+        table.add_column()
+        table.add_row("Status:", "PASS" if result["passed"] else "FAIL")
+        table.add_row(
+            "Readiness Score:",
+            f"{summary_result['score']}/{summary_result['max_score']}",
+        )
+        table.add_row("Critical issues:", str(severity_counts.get("critical", 0)))
+        table.add_row("High-risk issues:", str(risk_level_counts.get("high", 0)))
+        table.add_row("Medium-risk issues:", str(risk_level_counts.get("medium", 0)))
+        table.add_row(
+            "Human review issues:",
+            str(summary_result["requires_human_review_count"]),
+        )
+        reasons = result["reasons"]
+        assert isinstance(reasons, list)
+        reason_text = "; ".join(str(reason) for reason in reasons) or "none"
+        table.add_row("Reasons:", reason_text)
+        console.print("[bold]Dataset Quality Auditor Gate[/bold]\n")
+        console.print(table)
+
+    if not result["passed"]:
+        raise typer.Exit(code=1)
 
 
 @app.command()
