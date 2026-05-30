@@ -1,5 +1,6 @@
 """Command-line interface for Dataset Quality Auditor."""
 
+import json
 from pathlib import Path
 from typing import Annotated
 
@@ -11,6 +12,7 @@ from rich.table import Table
 from dataset_quality_auditor import __version__
 from dataset_quality_auditor.ai import generate_ai_review
 from dataset_quality_auditor.audit.engine import run_audit
+from dataset_quality_auditor.audit.summary import summarize_audit_result
 from dataset_quality_auditor.contracts import (
     generate_contract,
     save_contract,
@@ -34,6 +36,7 @@ app = typer.Typer(
 )
 console = Console()
 REPORT_FORMATS = {"json", "markdown", "html", "all"}
+SUMMARY_FORMATS = {"json", "text"}
 
 
 def _planned_message(feature: str) -> None:
@@ -56,6 +59,18 @@ def _validate_report_format(report_format: str) -> str:
         allowed = ", ".join(sorted(REPORT_FORMATS))
         msg = (
             f"Unsupported report format '{report_format}'. "
+            f"Supported formats: {allowed}."
+        )
+        raise typer.BadParameter(msg)
+    return normalized
+
+
+def _validate_summary_format(summary_format: str) -> str:
+    normalized = summary_format.lower()
+    if normalized not in SUMMARY_FORMATS:
+        allowed = ", ".join(sorted(SUMMARY_FORMATS))
+        msg = (
+            f"Unsupported summary format '{summary_format}'. "
             f"Supported formats: {allowed}."
         )
         raise typer.BadParameter(msg)
@@ -261,6 +276,67 @@ def report(
     console.print("[bold]Dataset Quality Auditor Report[/bold]\n")
     for path in generated:
         console.print(f"Generated: [cyan]{path.as_posix()}[/cyan]")
+
+
+@app.command()
+def summary(
+    audit_json: Annotated[
+        Path,
+        typer.Argument(
+            exists=True,
+            file_okay=True,
+            dir_okay=False,
+            readable=True,
+            help="Path to audit.json from a deterministic audit run.",
+        ),
+    ],
+    format: Annotated[
+        str,
+        typer.Option(
+            "--format",
+            "-f",
+            help="Summary output format: text or json.",
+        ),
+    ] = "text",
+) -> None:
+    """Print a compact summary from existing audit JSON without rerunning checks."""
+    normalized = _validate_summary_format(format)
+    try:
+        audit_result = load_audit_json(audit_json)
+        audit_summary = summarize_audit_result(audit_result)
+    except (FileNotFoundError, ValueError) as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    if normalized == "json":
+        console.print(json.dumps(audit_summary, indent=2, sort_keys=True))
+        return
+
+    table = Table.grid(padding=(0, 1))
+    table.add_column(style="bold")
+    table.add_column()
+    table.add_row("Dataset:", str(audit_summary["dataset_path"]))
+    table.add_row("Mode:", str(audit_summary["mode"]))
+    if "test_dataset_path" in audit_summary:
+        table.add_row("Test dataset:", str(audit_summary["test_dataset_path"]))
+    if "target_column" in audit_summary:
+        table.add_row("Target:", str(audit_summary["target_column"]))
+    table.add_row(
+        "Readiness Score:",
+        f"{audit_summary['score']}/{audit_summary['max_score']}",
+    )
+    table.add_row("Band:", str(audit_summary["score_band"]))
+    table.add_row("Issues:", str(audit_summary["issue_count"]))
+    table.add_row("Failed issues:", str(audit_summary["failed_count"]))
+    table.add_row(
+        "Human review:",
+        str(audit_summary["requires_human_review_count"]),
+    )
+    table.add_row(
+        "Top issue IDs:",
+        ", ".join(audit_summary["top_issue_ids"]) or "none",
+    )
+    console.print("[bold]Dataset Quality Auditor Summary[/bold]\n")
+    console.print(table)
 
 
 @app.command()
