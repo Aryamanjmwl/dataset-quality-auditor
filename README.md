@@ -71,6 +71,7 @@ release.
 | Show version | `dqa version` |
 | Audit one CSV | `dqa audit examples/datasets/classification_dirty.csv --target label --format all` |
 | Audit train/test CSVs | `dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all` |
+| Print compact audit summary | `dqa summary reports/audit.json --format text` |
 | Generate an HTML report | `dqa report reports/audit.json --format html` |
 | Generate a YAML contract | `dqa contract examples/datasets/classification_dirty.csv --target label` |
 | Validate against a contract | `dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml` |

@@ -66,6 +66,25 @@ Output files:
 - `reports/audit_report.md`
 - `reports/audit_report.html`
 
+## `dqa summary`
+
+Purpose: print a compact summary from existing deterministic audit JSON without
+rerunning checks.
+
+Syntax:
+
+```bash
+dqa summary AUDIT_JSON [--format text|json]
+```
+
+Example:
+
+```bash
+dqa summary reports/audit.json --format json
+```
+
+Output: terminal text or machine-readable JSON.
+
 ## `dqa contract`
 
 Purpose: generate a deterministic YAML data contract from an observed dataset.
