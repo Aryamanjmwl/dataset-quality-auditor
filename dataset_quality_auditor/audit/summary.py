@@ -73,5 +73,97 @@ def summarize_audit_result(audit_result: dict[str, Any]) -> dict[str, Any]:
     return summary
 
 
+def evaluate_audit_gate(
+    audit_result: dict[str, Any],
+    *,
+    min_score: float = 0,
+    max_critical: int | None = None,
+    max_high: int | None = None,
+    max_medium: int | None = None,
+    max_human_review: int | None = None,
+) -> dict[str, Any]:
+    """Evaluate deterministic CI/CD gate rules against existing audit JSON."""
+    summary = summarize_audit_result(audit_result)
+    score = summary.get("score")
+    if not isinstance(score, int | float):
+        msg = "Audit summary is missing a numeric readiness score."
+        raise ValueError(msg)
+
+    gate: dict[str, int | float] = {"min_score": min_score}
+    reasons: list[str] = []
+
+    if score < min_score:
+        reasons.append(
+            f"score {_format_number(score)} is below minimum "
+            f"{_format_number(min_score)}"
+        )
+
+    severity_counts = summary["severity_counts"]
+    risk_level_counts = summary["risk_level_counts"]
+    if not isinstance(severity_counts, dict) or not isinstance(risk_level_counts, dict):
+        msg = "Audit summary contains invalid count objects."
+        raise ValueError(msg)
+
+    _evaluate_count_limit(
+        reasons,
+        gate,
+        key="max_critical",
+        label="critical issue count",
+        observed=int(severity_counts.get("critical", 0)),
+        limit=max_critical,
+    )
+    _evaluate_count_limit(
+        reasons,
+        gate,
+        key="max_high",
+        label="high risk issue count",
+        observed=int(risk_level_counts.get("high", 0)),
+        limit=max_high,
+    )
+    _evaluate_count_limit(
+        reasons,
+        gate,
+        key="max_medium",
+        label="medium risk issue count",
+        observed=int(risk_level_counts.get("medium", 0)),
+        limit=max_medium,
+    )
+    _evaluate_count_limit(
+        reasons,
+        gate,
+        key="max_human_review",
+        label="human review issue count",
+        observed=int(summary["requires_human_review_count"]),
+        limit=max_human_review,
+    )
+
+    return {
+        "passed": not reasons,
+        "reasons": reasons,
+        "summary": summary,
+        "gate": gate,
+    }
+
+
 def _sorted_counts(counts: Counter[str]) -> dict[str, int]:
     return {key: counts[key] for key in sorted(counts)}
+
+
+def _evaluate_count_limit(
+    reasons: list[str],
+    gate: dict[str, int | float],
+    *,
+    key: str,
+    label: str,
+    observed: int,
+    limit: int | None,
+) -> None:
+    if limit is None:
+        return
+    gate[key] = limit
+    if observed > limit:
+        reasons.append(f"{label} {observed} exceeds maximum {limit}")
+
+
+def _format_number(value: int | float) -> str:
+    return f"{value:g}"

@@ -85,6 +85,26 @@ dqa summary reports/audit.json --format json
 
 Output: terminal text or machine-readable JSON.
 
+## `dqa gate`
+
+Purpose: evaluate simple deterministic CI/CD gate rules from existing audit JSON
+without rerunning checks.
+
+Syntax:
+
+```bash
+dqa gate AUDIT_JSON [--min-score SCORE] [--max-critical N] [--max-high N] [--max-medium N] [--max-human-review N] [--format text|json]
+```
+
+Example:
+
+```bash
+dqa gate reports/audit.json --min-score 80 --max-critical 0 --max-high 0
+```
+
+Output: terminal text or machine-readable JSON. The command exits with code `0`
+when the gate passes and non-zero when it fails.
+
 ## `dqa contract`
 
 Purpose: generate a deterministic YAML data contract from an observed dataset.
