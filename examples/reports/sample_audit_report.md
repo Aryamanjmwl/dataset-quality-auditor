@@ -190,7 +190,7 @@ This score is deterministic. AI cannot modify it.
 
 ## Reproducibility Metadata
 
-- Package version: `0.1.0`
+- Package version: `0.2.0`
 - Engine version: `0.1.0`
 - Deterministic: `True`
 - AI generated: `False`

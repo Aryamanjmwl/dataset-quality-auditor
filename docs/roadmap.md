@@ -12,19 +12,21 @@
 - Contract validation mode.
 - Advanced ML-readiness checks.
 - Train/test audit mode.
-- Guarded mock AI review.
-- Graph-style AI review workflow.
+- Deterministic train/test drift checks.
+- Configurable audit thresholds.
+- Compact audit summaries and CI gates.
+- Guarded mock/local review.
+- Graph-style guarded review workflow.
 - Curated public example datasets and sample artifacts.
 
 ## Next
 
 - Curate additional sample outputs for common dataset risk scenarios.
-- Add an OpenAI-compatible provider behind the existing guardrails.
-- Add an optional Ollama/local provider.
+- Prepare the next source release.
+- Evaluate optional external provider adapters behind the existing guardrails.
 - Evaluate optional real LangGraph integration.
 - Add more statistical drift tests where evidence and assumptions are clear.
 - Create a short demo GIF or video.
-- Prepare a v0.1.0 release.
 
 ## Later
 
@@ -36,6 +38,7 @@
 ## Non-Goals For The MVP
 
 - Automatic dataset cleaning or mutation.
-- Unguarded AI-generated findings.
+- Unguarded generated findings.
 - Replacing Great Expectations, Pandera, or Evidently.
 - Streamlit or dashboard-first workflows.
+- Docker, cloud connectors, or external LLM providers in the current release.

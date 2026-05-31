@@ -80,6 +80,27 @@ def _validate_summary_format(summary_format: str) -> str:
     return normalized
 
 
+def _validate_gate_options(
+    min_score: float,
+    max_critical: int | None,
+    max_high: int | None,
+    max_medium: int | None,
+    max_human_review: int | None,
+) -> None:
+    if min_score < 0 or min_score > 100:
+        raise typer.BadParameter("--min-score must be between 0 and 100.")
+
+    limits = {
+        "--max-critical": max_critical,
+        "--max-high": max_high,
+        "--max-medium": max_medium,
+        "--max-human-review": max_human_review,
+    }
+    for option, value in limits.items():
+        if value is not None and value < 0:
+            raise typer.BadParameter(f"{option} must be greater than or equal to 0.")
+
+
 def _write_report_artifacts(
     audit_result: dict,
     report_format: str,
@@ -400,6 +421,13 @@ def gate(
 ) -> None:
     """Evaluate deterministic CI/CD gate rules from existing audit JSON."""
     normalized = _validate_summary_format(format)
+    _validate_gate_options(
+        min_score,
+        max_critical,
+        max_high,
+        max_medium,
+        max_human_review,
+    )
     try:
         audit_result = load_audit_json(audit_json)
         result = evaluate_audit_gate(

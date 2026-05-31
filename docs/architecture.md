@@ -18,8 +18,9 @@ Typer CLI + Rich output
   |     +-- schema inference
   |     +-- check registry
   |     |     +-- single-dataset checks
-  |     |     +-- train/test checks
-  |     +-- deterministic scoring
+  |     |     +-- train/test drift checks
+  |     +-- configurable thresholds
+  |     +-- readiness scoring
   |     +-- reports/audit.json
   |
   +-- report command
@@ -33,9 +34,15 @@ Typer CLI + Rich output
   +-- validate command
   |     +-- contract validator
   |
+  +-- summary command
+  |     +-- compact audit JSON summary
+  |
+  +-- gate command
+  |     +-- deterministic CI gate
+  |
   +-- review command
-        +-- provider abstraction
-        +-- mock provider
+        +-- provider-ready boundary
+        +-- mock/local review
         +-- graph-style workflow
         +-- guardrails
         +-- reports/ai_review.json
@@ -44,7 +51,8 @@ Typer CLI + Rich output
 ## CLI Layer
 
 The CLI is implemented with Typer and uses Rich for terminal summaries. It is
-the primary interface for audit, reports, contracts, validation, and AI review.
+the primary interface for audit, reports, contracts, validation, summaries, CI
+gates, and guarded mock/local review.
 
 ## Deterministic Audit Engine
 
@@ -76,7 +84,13 @@ datatype risks, outliers, correlation, and target leakage candidates.
 ## Train/Test Mode
 
 Train/test mode audits a training CSV and a test CSV together. It detects schema
-mismatch, exact train/test overlap, numeric drift, and categorical drift.
+mismatch, exact train/test overlap, numeric drift, categorical drift, and target
+distribution drift.
+
+## Configurable Thresholds
+
+Supported audit thresholds can be overridden with `dqa audit --config`. Missing
+values fall back to deterministic defaults.
 
 ## Reports
 
@@ -89,10 +103,15 @@ Contracts are YAML files generated from deterministic profiles. Validation
 checks required columns, logical types, nullable constraints, missingness,
 numeric ranges, categorical values, and uniqueness hints.
 
-## AI Review Foundation
+## Summary And CI Gate
 
-AI review reads audit JSON rather than raw datasets by default. The current
-provider is `mock`, which is deterministic and local.
+`dqa summary` and `dqa gate` consume existing audit JSON. They do not rerun
+audits, modify datasets, or change readiness scores.
+
+## Guarded Review Boundary
+
+Guarded review reads audit JSON rather than raw datasets by default. The current
+implementation is mock/local and deterministic.
 
 ## Graph-Style Review Workflow
 
@@ -109,12 +128,15 @@ It writes guarded JSON and Markdown review artifacts.
 
 ## Guardrails
 
-Guardrails validate every AI review before writing output. Reviews are rejected
-if they reference unknown issue IDs, change readiness scores, change score
-bands, or fail to mark deterministic source metadata.
+Guardrails validate every guarded review before writing output. Reviews are
+rejected if they reference unknown issue IDs, change readiness scores, change
+score bands, or fail to mark deterministic source metadata.
 
 ## Provider Abstraction
 
-Providers implement a small review interface. Future OpenAI-compatible and
-Ollama/local adapters can plug into the same boundary without changing the
-deterministic audit engine.
+The review boundary keeps future provider adapters separate from deterministic
+audit logic. No external LLM provider is included in the current release.
+
+The deterministic audit engine is the source of truth. Reports, contracts,
+summaries, CI gates, and guarded review consume audit output instead of
+inventing findings.

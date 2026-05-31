@@ -31,6 +31,12 @@ dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sampl
 This demonstrates train/test overlap, categorical drift, schema mismatch, and
 numeric drift checks.
 
+Optional threshold configuration:
+
+```bash
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --config examples/audit-config.yaml
+```
+
 ## Regenerate Reports
 
 ```bash
@@ -39,6 +45,15 @@ dqa report reports/audit.json --format all
 ```
 
 Reports are generated only from deterministic audit JSON.
+
+## Summarize And Gate
+
+```bash
+dqa summary reports/audit.json --format json
+dqa gate reports/audit.json --min-score 80 --max-critical 0 --max-high 0
+```
+
+`dqa gate` exits non-zero when the configured gate fails.
 
 ## Generate a Contract
 
@@ -60,7 +75,7 @@ Output:
 
 - `reports/validation_result.json`
 
-## Run Mock AI Review
+## Run Guarded Mock/Local Review
 
 ```bash
 dqa review reports/audit.json --provider mock
