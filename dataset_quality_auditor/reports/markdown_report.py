@@ -11,6 +11,23 @@ def _fmt(value: object) -> str:
     return str(value)
 
 
+def _md_inline(value: object) -> str:
+    return _fmt(value).replace("\r", " ").replace("\n", " ").strip()
+
+
+def _md_code(value: object) -> str:
+    return _md_inline(value).replace("`", "\\`")
+
+
+def _md_cell(value: object) -> str:
+    return (
+        _md_inline(value)
+        .replace("\\", "\\\\")
+        .replace("|", "\\|")
+        .replace("`", "\\`")
+    )
+
+
 def _issue_counts(issues: list[dict[str, object]]) -> dict[str, int]:
     return {
         severity: sum(1 for issue in issues if issue.get("severity") == severity)
@@ -51,13 +68,14 @@ def generate_markdown_report(audit_result: dict) -> str:
         "",
         "## Executive Summary",
         "",
-        f"- Dataset path: `{audit_result['dataset_path']}`",
-        f"- Test dataset path: `{audit_result.get('test_dataset_path')}`",
-        f"- Target column: `{audit_result.get('target_column')}`",
-        f"- Row count: {profile['row_count']}",
-        f"- Column count: {profile['column_count']}",
-        f"- Readiness score: {score['score']}/{score['max_score']}",
-        f"- Score band: `{score['score_band']}`",
+        f"- Dataset path: `{_md_code(audit_result['dataset_path'])}`",
+        f"- Test dataset path: `{_md_code(audit_result.get('test_dataset_path'))}`",
+        f"- Target column: `{_md_code(audit_result.get('target_column'))}`",
+        f"- Row count: {_md_inline(profile['row_count'])}",
+        f"- Column count: {_md_inline(profile['column_count'])}",
+        f"- Readiness score: {_md_inline(score['score'])}/"
+        f"{_md_inline(score['max_score'])}",
+        f"- Score band: `{_md_code(score['score_band'])}`",
         f"- Total issues: {len(issues)}",
         f"- Critical: {counts['critical']}",
         f"- Warning: {counts['warning']}",
@@ -67,20 +85,20 @@ def generate_markdown_report(audit_result: dict) -> str:
         "",
         "| Metric | Value |",
         "|---|---:|",
-        f"| Rows | {profile['row_count']} |",
-        f"| Columns | {profile['column_count']} |",
-        f"| Duplicate rows | {profile['duplicate_row_count']} |",
-        f"| Duplicate percent | {_fmt(profile['duplicate_row_percent'])} |",
-        f"| Target column | {_fmt(audit_result.get('target_column'))} |",
-        f"| Mode | {_fmt(audit_result.get('mode', 'single_dataset'))} |",
-        f"| Audit ID | {audit_result['audit_id']} |",
-        f"| Created at | {audit_result['created_at']} |",
+        f"| Rows | {_md_cell(profile['row_count'])} |",
+        f"| Columns | {_md_cell(profile['column_count'])} |",
+        f"| Duplicate rows | {_md_cell(profile['duplicate_row_count'])} |",
+        f"| Duplicate percent | {_md_cell(profile['duplicate_row_percent'])} |",
+        f"| Target column | {_md_cell(audit_result.get('target_column'))} |",
+        f"| Mode | {_md_cell(audit_result.get('mode', 'single_dataset'))} |",
+        f"| Audit ID | {_md_cell(audit_result['audit_id'])} |",
+        f"| Created at | {_md_cell(audit_result['created_at'])} |",
         "",
         "## Readiness Score",
         "",
-        f"Score: **{score['score']}/{score['max_score']}**",
+        f"Score: **{_md_inline(score['score'])}/{_md_inline(score['max_score'])}**",
         "",
-        f"Band: **{score['score_band']}**",
+        f"Band: **{_md_inline(score['score_band'])}**",
         "",
         "This score is deterministic. AI cannot modify it.",
         "",
@@ -90,7 +108,10 @@ def generate_markdown_report(audit_result: dict) -> str:
     for deduction in score.get("deductions", []):
         lines.append(
             "| {issue_id} | {severity} | {deduction} | {reason} |".format(
-                **deduction
+                issue_id=_md_cell(deduction.get("issue_id")),
+                severity=_md_cell(deduction.get("severity")),
+                deduction=_md_cell(deduction.get("deduction")),
+                reason=_md_cell(deduction.get("reason")),
             )
         )
     lines.extend(["", "## Issue Summary", ""])
@@ -109,14 +130,16 @@ def generate_markdown_report(audit_result: dict) -> str:
             scope = issue["scope"]
             lines.extend(
                 [
-                    f"- `{issue['issue_id']}`: {issue['title']}",
-                    f"  - Affected column: `{_fmt(scope.get('column'))}`",
-                    f"  - Evidence metric: `{evidence['metric']}`",
-                    f"  - Observed value: {_fmt(evidence['observed_value'])}",
-                    f"  - Threshold: {_fmt(evidence['threshold'])}",
-                    f"  - Recommendation: {issue['recommendation']}",
+                    f"- `{_md_code(issue['issue_id'])}`: "
+                    f"{_md_inline(issue['title'])}",
+                    f"  - Affected column: `{_md_code(scope.get('column'))}`",
+                    f"  - Evidence metric: `{_md_code(evidence['metric'])}`",
+                    f"  - Observed value: "
+                    f"{_md_inline(evidence['observed_value'])}",
+                    f"  - Threshold: {_md_inline(evidence['threshold'])}",
+                    f"  - Recommendation: {_md_inline(issue['recommendation'])}",
                     "  - Human review required: "
-                    f"{issue['requires_human_review']}",
+                    f"{_md_inline(issue['requires_human_review'])}",
                     "",
                 ]
             )
@@ -134,29 +157,30 @@ def generate_markdown_report(audit_result: dict) -> str:
                 "| {name} | {role} | {dtype} | {missing} | {unique} | "
                 "{num} | {cat} |"
             ).format(
-                name=column["name"],
-                role=column["inferred_role"],
-                dtype=column["dtype"],
-                missing=_fmt(column["missing_percent"]),
-                unique=_fmt(column["unique_percent"]),
-                num=column["is_numeric"],
-                cat=column["is_categorical"],
+                name=_md_cell(column["name"]),
+                role=_md_cell(column["inferred_role"]),
+                dtype=_md_cell(column["dtype"]),
+                missing=_md_cell(column["missing_percent"]),
+                unique=_md_cell(column["unique_percent"]),
+                num=_md_cell(column["is_numeric"]),
+                cat=_md_cell(column["is_categorical"]),
             )
     )
     lines.extend(["", "## Recommended Next Steps", ""])
     recommendations = _recommendations(issues)
     lines.extend(
-        [f"- {item}" for item in recommendations] or ["No issue recommendations."]
+        [f"- {_md_inline(item)}" for item in recommendations]
+        or ["No issue recommendations."]
     )
     lines.extend(
         [
             "",
             "## Reproducibility Metadata",
             "",
-            f"- Package version: `{metadata['package_version']}`",
-            f"- Engine version: `{metadata['engine_version']}`",
-            f"- Deterministic: `{metadata['deterministic']}`",
-            f"- AI generated: `{metadata['ai_generated']}`",
+            f"- Package version: `{_md_code(metadata['package_version'])}`",
+            f"- Engine version: `{_md_code(metadata['engine_version'])}`",
+            f"- Deterministic: `{_md_code(metadata['deterministic'])}`",
+            f"- AI generated: `{_md_code(metadata['ai_generated'])}`",
             "",
         ]
     )
