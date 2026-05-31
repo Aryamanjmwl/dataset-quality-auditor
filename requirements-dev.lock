@@ -1,0 +1,10 @@
+# Lightweight development constraints for CI/security-audit reproducibility.
+# Regenerate intentionally after dependency review, for example:
+#   python -m pip freeze > requirements-dev.lock
+# This file is not used as the package dependency source of truth.
+# pyproject.toml remains authoritative for package metadata.
+pytest>=8.0
+pytest-cov>=5.0
+ruff>=0.8
+scipy>=1.11
+pip-audit>=2.7
