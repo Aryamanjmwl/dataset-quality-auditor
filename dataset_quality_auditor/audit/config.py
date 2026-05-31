@@ -18,6 +18,10 @@ SUPPORTED_THRESHOLD_KEYS = {
         "warning_shift": "target_distribution_drift_warning_shift",
         "critical_shift": "target_distribution_drift_critical_shift",
     },
+    "ks_drift": {
+        "p_value_warning": "ks_drift_p_value_warning",
+        "p_value_info": "ks_drift_p_value_info",
+    },
 }
 
 

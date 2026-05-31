@@ -19,6 +19,8 @@ DEFAULT_CONFIG: dict[str, float] = {
     "categorical_drift_missing_category_ratio": 0.50,
     "target_distribution_drift_warning_shift": 0.25,
     "target_distribution_drift_critical_shift": 0.50,
+    "ks_drift_p_value_warning": 0.05,
+    "ks_drift_p_value_info": 0.20,
 }
 
 

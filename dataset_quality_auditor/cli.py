@@ -602,7 +602,11 @@ def review(
         str,
         typer.Option(
             "--provider",
-            help="Review provider. Currently only the local deterministic mock.",
+            help=(
+                "AI review provider: 'mock' deterministic mock "
+                "(no API key needed) or 'anthropic' "
+                "(requires ANTHROPIC_API_KEY)."
+            ),
         ),
     ] = "mock",
     output_dir: Annotated[

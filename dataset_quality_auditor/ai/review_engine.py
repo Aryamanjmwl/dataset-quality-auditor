@@ -13,7 +13,16 @@ def _resolve_provider(provider_name: str) -> AIReviewProvider:
     normalized = provider_name.lower()
     if normalized == "mock":
         return MockAIReviewProvider()
-    msg = f"Unsupported AI review provider '{provider_name}'. Supported: mock."
+    if normalized == "anthropic":
+        from dataset_quality_auditor.ai.providers.anthropic_provider import (
+            AnthropicAIReviewProvider,
+        )
+
+        return AnthropicAIReviewProvider()
+    msg = (
+        f"Unsupported AI review provider '{provider_name}'. "
+        "Supported: mock, anthropic."
+    )
     raise ValueError(msg)
 
 

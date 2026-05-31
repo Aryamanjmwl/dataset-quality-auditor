@@ -12,6 +12,7 @@ from dataset_quality_auditor.audit.checks.drift import check_train_test_drift
 from dataset_quality_auditor.audit.checks.duplicates import check_duplicate_rows
 from dataset_quality_auditor.audit.checks.id_like import check_id_like_columns
 from dataset_quality_auditor.audit.checks.imbalance import check_class_imbalance
+from dataset_quality_auditor.audit.checks.ks_drift import check_ks_drift
 from dataset_quality_auditor.audit.checks.leakage import check_target_leakage_candidates
 from dataset_quality_auditor.audit.checks.missing import check_missing_values
 from dataset_quality_auditor.audit.checks.outliers import check_outlier_risk
@@ -49,4 +50,5 @@ def get_train_test_checks() -> list[TrainTestCheck]:
         check_schema_mismatch,
         check_train_test_overlap,
         check_train_test_drift,
+        check_ks_drift,
     ]

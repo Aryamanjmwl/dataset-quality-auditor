@@ -64,6 +64,27 @@ editable installs unless a PyPI package is published separately. Docker,
 cloud connectors, and external LLM provider support are not part of this
 release.
 
+## Synthetic Demo Dataset
+
+The repository includes larger deterministic synthetic CSVs for human demos:
+
+```bash
+# Audit the synthetic training set
+dqa audit examples/datasets/synthetic_train.csv --target target --format all
+
+# Audit with train/test comparison (shows drift + overlap checks)
+dqa audit examples/datasets/synthetic_train.csv \
+  --test examples/datasets/synthetic_test.csv \
+  --target target --format all
+
+# Run the CI gate
+dqa gate reports/audit.json --min-score 60 --max-critical 0
+```
+
+The generator is committed at `examples/datasets/generate_synthetic.py` so the
+static CSVs can be regenerated when needed. These files are intended for demos;
+the smaller examples remain the default test fixtures.
+
 ## Common Commands
 
 | Task | Command |
@@ -103,6 +124,9 @@ Curated examples are available in:
 - `examples/reports/`
 - `examples/contracts/`
 - `examples/validation/`
+
+For larger demo data, see `examples/datasets/synthetic_train.csv` and
+`examples/datasets/synthetic_test.csv`.
 
 ## Architecture Overview
 

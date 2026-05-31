@@ -20,6 +20,7 @@ TARGET_NAME_SIGNALS = (
     "final",
 )
 TARGET_CORRELATION_THRESHOLD = 0.95
+NAME_SIGNAL_CORRELATION_FLOOR = 0.50
 DOMINANT_TARGET_RATIO_THRESHOLD = 0.98
 MAX_CATEGORY_COUNT = 50
 
@@ -94,6 +95,7 @@ def _leakage_issue(
             context,
             {
                 "target_correlation_threshold": TARGET_CORRELATION_THRESHOLD,
+                "name_signal_correlation_floor": NAME_SIGNAL_CORRELATION_FLOOR,
                 "dominant_target_ratio_threshold": DOMINANT_TARGET_RATIO_THRESHOLD,
             },
         ),
@@ -113,20 +115,37 @@ def check_target_leakage_candidates(
         if column == context.target_column:
             continue
         lower_name = str(column).lower()
-        if any(signal in lower_name for signal in TARGET_NAME_SIGNALS):
-            issues.append(
-                _leakage_issue(
-                    context,
-                    str(column),
-                    "target_like_name",
-                    True,
-                    True,
-                    WARNING,
-                    MEDIUM,
-                )
-            )
-            continue
         correlation = _numeric_target_correlation(df[column], target)
+        if any(signal in lower_name for signal in TARGET_NAME_SIGNALS):
+            if correlation is not None:
+                if correlation < NAME_SIGNAL_CORRELATION_FLOOR:
+                    continue
+                if correlation < TARGET_CORRELATION_THRESHOLD:
+                    issues.append(
+                        _leakage_issue(
+                            context,
+                            str(column),
+                            "target_like_name_with_correlation",
+                            correlation,
+                            NAME_SIGNAL_CORRELATION_FLOOR,
+                            WARNING,
+                            MEDIUM,
+                        )
+                    )
+                    continue
+            else:
+                issues.append(
+                    _leakage_issue(
+                        context,
+                        str(column),
+                        "target_like_name",
+                        True,
+                        True,
+                        WARNING,
+                        MEDIUM,
+                    )
+                )
+                continue
         if correlation is not None and correlation >= TARGET_CORRELATION_THRESHOLD:
             issues.append(
                 _leakage_issue(
