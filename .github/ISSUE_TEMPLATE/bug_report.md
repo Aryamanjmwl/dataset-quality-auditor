@@ -1,35 +1,70 @@
 ---
-name: Bug report
-about: Report a reproducible problem
-title: "[Bug]: "
-labels: bug
-assignees: ""
+name: Bug Report
+about: Report a bug or issue with Dataset Quality Auditor
+title: '[BUG] '
+labels: 'bug'
+assignees: ''
+
 ---
 
-## Summary
+## Description
 
-Describe the problem clearly.
+Clear and concise description of the bug.
 
 ## Steps to Reproduce
 
-1.
-2.
-3.
+1. Step 1
+2. Step 2
+3. ...
 
 ## Expected Behavior
 
-What did you expect to happen?
+What should happen?
 
 ## Actual Behavior
 
-What happened instead?
+What actually happened?
 
 ## Environment
 
-- OS:
-- Python version:
-- Dataset Quality Auditor version or commit:
+```bash
+# Run and paste output
+python --version
+pip show pandas numpy
+pip show dataset-quality-auditor
+```
+
+## Dataset Info
+
+```python
+# If possible, provide sample of your dataset
+import pandas as pd
+df = pd.read_csv('your_data.csv')
+print(f"Shape: {df.shape}")
+print(f"Columns: {df.columns.tolist()}")
+print(f"Types:\n{df.dtypes}")
+print(f"Missing:\n{df.isnull().sum()}")
+```
+
+## Error Output
+
+```
+Paste full error message/traceback here
+```
+
+## Command Run
+
+```bash
+# Exact command that caused the issue
+dqa audit your_data.csv --target label --format all
+```
+
+## Files
+
+- [ ] Can you share the dataset (or a sample)?
+- [ ] Can you share the audit JSON output?
+- [ ] Can you share the audit log?
 
 ## Additional Context
 
-Add logs, command output, or a small reproducible example if available.
+Any other context?

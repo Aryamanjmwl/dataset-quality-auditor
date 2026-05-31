@@ -1,23 +1,35 @@
 ---
-name: Feature request
-about: Suggest an improvement
-title: "[Feature]: "
-labels: enhancement
-assignees: ""
+name: Feature Request
+about: Suggest an improvement or new feature
+title: '[FEATURE] '
+labels: 'enhancement'
+assignees: ''
+
 ---
 
-## Summary
+## Description
 
-What would you like to improve?
+Clear description of the feature or improvement.
 
 ## Use Case
 
-Describe the workflow or problem this would help with.
+Why would this be useful? Who needs it?
 
-## Proposed Behavior
+## Proposed Solution
 
-What should the tool do?
+How should this work?
 
-## Notes
+## Example
 
-Add any constraints, examples, or alternatives considered.
+```bash
+# How would users interact with this feature?
+dqa audit data.csv --target label --new-option value
+```
+
+## Alternatives Considered
+
+Any other approaches?
+
+## Additional Context
+
+Any other information?
