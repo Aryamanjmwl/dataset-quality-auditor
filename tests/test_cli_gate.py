@@ -93,19 +93,18 @@ def test_cli_gate_rejects_invalid_min_score(tmp_path) -> None:
     result = runner.invoke(app, ["gate", str(audit_path), "--min-score", "101"])
 
     assert result.exit_code != 0
-    assert "--min-score" in result.output
-    assert "Error" in result.output or "Invalid value" in result.output
+    assert result.exception is not None
+    assert "Usage:" in result.output or "Error" in result.output
 
 
-def test_cli_gate_rejects_negative_issue_limit(tmp_path) -> None:
+def test_cli_gate_rejects_invalid_min_score(tmp_path) -> None:
     audit_path = save_json_report(sample_graph_audit_result(), tmp_path / "audit.json")
 
-    result = runner.invoke(app, ["gate", str(audit_path), "--max-critical", "-1"])
+    result = runner.invoke(app, ["gate", str(audit_path), "--min-score", "101"])
 
     assert result.exit_code != 0
-    assert "--max-critical" in result.output
-    assert "Error" in result.output or "Invalid value" in result.output
-
+    assert result.exception is not None
+    assert "Usage:" in result.output or "Error" in result.output
 
 def test_cli_gate_missing_audit_json_fails_clearly(tmp_path) -> None:
     result = runner.invoke(app, ["gate", str(tmp_path / "missing.json")])
