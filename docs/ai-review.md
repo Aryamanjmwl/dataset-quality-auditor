@@ -1,17 +1,17 @@
-# AI Review
+# Guarded Review
 
-Dataset Quality Auditor is designed to support AI-assisted review while keeping
-the deterministic audit engine as the source of truth.
+Dataset Quality Auditor is designed with a provider-ready review boundary while
+keeping the deterministic audit engine as the source of truth.
 
-The current implementation includes a provider-agnostic review foundation, a
-deterministic mock provider, and a local graph-style workflow. These paths do
-not call external APIs or require API keys.
+The current implementation includes a deterministic mock/local review path and
+a local graph-style workflow. These paths do not call external APIs or require
+API keys.
 
 ## Deterministic Boundary
 
-AI review reads `audit.json`. It does not read or modify raw datasets by default.
-This keeps review output traceable to deterministic issue IDs, scores, and
-evidence already produced by the audit engine.
+Guarded review reads `audit.json`. It does not read or modify raw datasets by
+default. This keeps review output traceable to deterministic issue IDs, scores,
+and evidence already produced by the audit engine.
 
 The review layer must not:
 
@@ -72,13 +72,13 @@ reports/ai_review.json
 reports/ai_review.md
 ```
 
-## Provider-Agnostic Design
+## Provider-Ready Boundary
 
-Providers implement a small interface that accepts deterministic audit output
-and returns JSON-serializable review output. Future OpenAI and Ollama providers
-can plug into this interface without changing the audit engine. Future real
-providers may also be placed behind the graph nodes, but the deterministic audit
-JSON remains the only source of findings and scores.
+The review boundary accepts deterministic audit output and returns
+JSON-serializable review output. Future external provider adapters could plug
+into this boundary without changing the audit engine, but no external provider
+is included in the current release. The deterministic audit JSON remains the
+only source of findings and scores.
 
 ## Guardrails
 

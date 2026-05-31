@@ -103,26 +103,32 @@ row count, and overlap percent of test.
 ### Numeric Drift
 
 Compares numeric feature means between train and test using a deterministic mean
-shift rule: `abs(test_mean - train_mean) / train_std`. A shift at or above 0.5 is
-info; at or above 1.0 is warning. This is not a statistical significance claim.
+shift rule: `abs(test_mean - train_mean) / train_std`. By default, a shift at
+or above 0.5 is info and at or above 1.0 is warning. These thresholds can be
+overridden with `dqa audit --config`. This is not a statistical significance
+claim.
 
 ### Categorical Drift
 
 Compares observed category sets and dominant category frequencies. Unseen test
-categories are warnings. Large missing category shifts are info for now.
-Strong dominant-category changes are warnings. Evidence includes capped examples
-of unseen/missing categories, unique counts, top categories, top frequencies,
-and the deterministic shift value.
+categories are warnings. By default, missing train categories are info when the
+missing category ratio is at or above 0.50, and dominant-category changes are
+warnings when the shift is at or above 0.30. These thresholds can be overridden
+with `dqa audit --config`. Evidence includes capped examples of unseen/missing
+categories, unique counts, top categories, top frequencies, and the
+deterministic shift value.
 
 ### Target Distribution Drift
 
 When the target column exists in both train and test, compares normalized target
 value distributions. A maximum class proportion shift at or above 0.25 is a
 warning; at or above 0.50 is critical. This is a deterministic readiness signal,
-not a statistical significance test.
+not a statistical significance test. These thresholds can be overridden with
+`dqa audit --config`.
 
 ## Limitations
 
 These checks are readiness signals, not proof of model failure. They do not
-modify data and do not use AI. Future AI review may explain these deterministic
-issues, but it must reference issue IDs and cannot invent findings.
+modify data and do not use external AI providers. Future guarded review may
+explain these deterministic issues, but it must reference issue IDs and cannot
+invent findings.

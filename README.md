@@ -4,9 +4,9 @@
 ![Python](https://img.shields.io/badge/python-3.10%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
-A deterministic-first, AI-assisted CLI for auditing machine learning datasets
+A deterministic-first CLI for auditing machine learning datasets
 before training — with readiness scoring, reproducible reports, validation
-contracts, and guarded AI review.
+contracts, and guarded mock/local review.
 
 ## Why This Exists
 
@@ -31,7 +31,7 @@ review.
 - Deterministic readiness score with structured issue evidence.
 - JSON, Markdown, and self-contained HTML reports.
 - YAML data contract generation and validation.
-- Guarded mock AI review and local graph-style review workflow.
+- Guarded mock/local review and local graph-style review workflow.
 - pytest, ruff, and GitHub Actions CI.
 
 ## Quickstart
@@ -59,8 +59,9 @@ Generated runtime outputs are written to folders such as `reports/` and
 `contracts/`. These folders are ignored by Git and should not be committed.
 Curated sample artifacts are committed under `examples/`.
 
-Current scope: local CSV files, deterministic checks, and an early-stage public
-release. Other file formats and remote data sources are not part of this
+Current scope: local CSV workflows, deterministic checks, and source/local
+editable installs unless a PyPI package is published separately. Docker,
+cloud connectors, and external LLM provider support are not part of this
 release.
 
 ## Common Commands
@@ -71,12 +72,13 @@ release.
 | Show version | `dqa version` |
 | Audit one CSV | `dqa audit examples/datasets/classification_dirty.csv --target label --format all` |
 | Audit train/test CSVs | `dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all` |
+| Audit with threshold config | `dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --config examples/audit-config.yaml` |
 | Print compact audit summary | `dqa summary reports/audit.json --format text` |
 | Run a CI quality gate | `dqa gate reports/audit.json --min-score 80 --max-critical 0 --max-high 0` ([example](docs/ci-gate-example.md)) |
 | Generate an HTML report | `dqa report reports/audit.json --format html` |
 | Generate a YAML contract | `dqa contract examples/datasets/classification_dirty.csv --target label` |
 | Validate against a contract | `dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml` |
-| Run mock AI review | `dqa review reports/audit.json --provider mock --workflow graph` |
+| Run guarded mock review | `dqa review reports/audit.json --provider mock --workflow graph` |
 
 ## Example Outputs
 
@@ -91,7 +93,7 @@ Contract and validation commands create:
 - `contracts/classification_dirty_contract.yaml`
 - `reports/validation_result.json`
 
-AI review commands create:
+Guarded review commands create:
 
 - `reports/ai_review.json`
 - `reports/ai_review.md` when `--workflow graph` is used
@@ -113,14 +115,16 @@ Typer CLI
       -> readiness scoring
   -> reports
   -> contracts and validation
-  -> guarded AI review
-      -> provider workflow
+  -> compact summary and CI gate
+  -> guarded mock/local review
+      -> provider-ready boundary
       -> graph workflow
       -> guardrails
 ```
 
-The deterministic audit engine is the source of truth. Reports, contracts, and
-AI review consume audit output instead of inventing findings.
+The deterministic audit engine is the source of truth. Reports, contracts,
+summaries, CI gates, and guarded review consume audit output instead of
+inventing findings.
 
 ## Deterministic-First Safety Model
 
@@ -129,12 +133,12 @@ AI review consume audit output instead of inventing findings.
 - AI does not change readiness scores or score bands.
 - AI does not modify datasets.
 - AI output must reference deterministic issue IDs.
-- Unsupported AI review output is rejected by guardrails.
+- Unsupported guarded review output is rejected by guardrails.
 
-## AI Review Workflow
+## Guarded Review Workflow
 
-The current AI provider is a local deterministic mock provider. It requires no
-API keys and makes no external calls.
+The current review implementation is mock/local only. It requires no API keys
+and makes no external calls.
 
 ```bash
 dqa review reports/audit.json --provider mock
@@ -143,8 +147,7 @@ dqa review reports/audit.json --provider mock --workflow graph
 
 The graph workflow runs local nodes for risk prioritization, safe fix
 recommendations, contract advice, Markdown review writing, and output
-validation. OpenAI-compatible and Ollama/local provider adapters are future
-work.
+validation. Real external provider adapters are future work.
 
 ## Data Contracts
 
@@ -174,17 +177,16 @@ Completed MVP foundations:
 
 - Package foundation and CI.
 - Deterministic audit engine and advanced ML checks.
-- Reports, contracts, validation, mock AI review, and graph workflow.
+- Reports, contracts, validation, mock/local review, summary, and CI gate.
 - Curated public demo datasets and sample artifacts.
 
 Future work:
 
-- OpenAI-compatible provider.
-- Optional Ollama/local provider.
+- Optional external provider adapters behind the existing review boundary.
 - Optional real LangGraph integration.
 - More statistical drift tests.
 - Demo GIF or video.
-- v0.1.0 release.
+- PyPI publishing, if the project is published as an installable package.
 
 ## Contributing
 

@@ -21,13 +21,14 @@ Purpose: run deterministic dataset readiness checks and write `audit.json`.
 Syntax:
 
 ```bash
-dqa audit DATASET --target TARGET [--test TEST_DATASET] [--format json|markdown|html|all] [--output-dir reports]
+dqa audit DATASET --target TARGET [--test TEST_DATASET] [--config CONFIG] [--format json|markdown|html|all] [--output-dir reports]
 ```
 
 Important options:
 
 - `--target`: target column name.
 - `--test`: optional test dataset for train/test checks.
+- `--config`: optional YAML file with supported threshold overrides.
 - `--format`: report artifact format. Default is `json`.
 - `--output-dir`: output directory. Default is `reports`.
 
@@ -36,6 +37,7 @@ Examples:
 ```bash
 dqa audit examples/datasets/classification_dirty.csv --target label --format all
 dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --config examples/audit-config.yaml
 ```
 
 Output files:

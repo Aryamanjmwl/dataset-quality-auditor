@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dataset-quality-auditor"
-version = "0.1.0"
+version = "0.2.0"
 description = "CLI-first deterministic dataset readiness auditor for tabular ML datasets."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -77,7 +77,6 @@ exclude = [
     ".pytest_cache",
     ".ruff_cache",
     "__pycache__",
-    "dqa",
 ]
 
 [tool.ruff.lint]

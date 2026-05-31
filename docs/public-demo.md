@@ -9,6 +9,12 @@ dqa audit examples/datasets/classification_dirty.csv --target label --format all
 
 dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --format all
 
+dqa audit examples/datasets/train_sample.csv --test examples/datasets/test_sample.csv --target label --config examples/audit-config.yaml
+
+dqa summary reports/audit.json --format json
+
+dqa gate reports/audit.json --min-score 80 --max-critical 0 --max-high 0
+
 dqa contract examples/datasets/classification_dirty.csv --target label
 
 dqa validate examples/datasets/classification_dirty.csv --contract contracts/classification_dirty_contract.yaml
@@ -33,6 +39,6 @@ Curated examples are committed under:
 - `examples/contracts/`
 - `examples/validation/`
 
-The AI review command uses the deterministic mock provider only. It does not
-call external APIs, require API keys, invent findings, modify scores, or edit
-datasets.
+The guarded review command uses the deterministic mock/local path only. It does
+not call external APIs, require API keys, invent findings, modify scores, or
+edit datasets.
