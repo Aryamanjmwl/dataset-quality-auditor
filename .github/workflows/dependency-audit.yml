@@ -28,5 +28,4 @@ jobs:
           python -m pip install pip-audit
 
       - name: Run dependency audit
-        continue-on-error: true
         run: python -m pip_audit
